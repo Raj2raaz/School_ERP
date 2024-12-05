@@ -1,0 +1,109 @@
+{
+    "classes": [
+      {
+        "id": "class1",
+        "name": "10A",
+        "year": 2024,
+        "teacher": "teacher1",
+        "studentFees": 10000,
+        "students": ["student1", "student2", "student3"]
+      },
+      {
+        "id": "class2",
+        "name": "12B",
+        "year": 2024,
+        "teacher": "teacher2",
+        "studentFees": 12000,
+        "students": ["student4", "student5", "student6"]
+      },
+      {
+        "id": "class3",
+        "name": "9C",
+        "year": 2024,
+        "teacher": "teacher3",
+        "studentFees": 8000,
+        "students": ["student7", "student8"]
+      },
+      {
+        "id": "class4",
+        "name": "8A",
+        "year": 2024,
+        "teacher": "teacher4",
+        "studentFees": 9000,
+        "students": ["student9", "student10"]
+      },
+      {
+        "id": "class5",
+        "name": "11A",
+        "year": 2024,
+        "teacher": "teacher5",
+        "studentFees": 11000,
+        "students": ["student11", "student12"]
+      },
+      {
+        "id": "class6",
+        "name": "7B",
+        "year": 2024,
+        "teacher": "teacher6",
+        "studentFees": 7000,
+        "students": ["student13", "student14"]
+      },
+      {
+        "id": "class7",
+        "name": "6A",
+        "year": 2024,
+        "teacher": "teacher7",
+        "studentFees": 6000,
+        "students": ["student15", "student16"]
+      },
+      {
+        "id": "class8",
+        "name": "5C",
+        "year": 2024,
+        "teacher": "teacher8",
+        "studentFees": 5000,
+        "students": ["student17", "student18"]
+      },
+      {
+        "id": "class9",
+        "name": "4A",
+        "year": 2024,
+        "teacher": "teacher9",
+        "studentFees": 4000,
+        "students": ["student19", "student20"]
+      },
+      {
+        "id": "class10",
+        "name": "3B",
+        "year": 2024,
+        "teacher": "teacher10",
+        "studentFees": 3000,
+        "students": ["student21", "student22"]
+      }
+    ],
+    "students": [
+      { "id": "student1", "name": "John Doe", "gender": "Male", "dob": "2008-01-15", "contact": "9876543210", "feesPaid": true, "class": "class1", "email": "john.doe@example.com", "password": "password123" },
+      { "id": "student2", "name": "Jane Smith", "gender": "Female", "dob": "2008-06-20", "contact": "8765432109", "feesPaid": false, "class": "class1", "email": "jane.smith@example.com", "password": "password123" },
+      { "id": "student3", "name": "Alice Brown", "gender": "Female", "dob": "2009-05-25", "contact": "7654321098", "feesPaid": true, "class": "class1", "email": "alice.brown@example.com", "password": "password123" },
+      { "id": "student4", "name": "Michael Johnson", "gender": "Male", "dob": "2007-02-10", "contact": "8765432110", "feesPaid": true, "class": "class2", "email": "michael.johnson@example.com", "password": "password123" },
+      { "id": "student5", "name": "Emily Davis", "gender": "Female", "dob": "2007-03-12", "contact": "7654321109", "feesPaid": false, "class": "class2", "email": "emily.davis@example.com", "password": "password123" },
+      { "id": "student6", "name": "Chris Lee", "gender": "Male", "dob": "2007-04-15", "contact": "6543210987", "feesPaid": true, "class": "class2", "email": "chris.lee@example.com", "password": "password123" },
+      { "id": "student7", "name": "Sarah Wilson", "gender": "Female", "dob": "2006-08-19", "contact": "5432109876", "feesPaid": false, "class": "class3", "email": "sarah.wilson@example.com", "password": "password123" },
+      { "id": "student8", "name": "David Garcia", "gender": "Male", "dob": "2006-09-25", "contact": "4321098765", "feesPaid": true, "class": "class3", "email": "david.garcia@example.com", "password": "password123" },
+      { "id": "student9", "name": "Laura Martinez", "gender": "Female", "dob": "2005-11-10", "contact": "3210987654", "feesPaid": true, "class": "class4", "email": "laura.martinez@example.com", "password": "password123" },
+      { "id": "student10", "name": "Robert Hernandez", "gender": "Male", "dob": "2005-12-15", "contact": "2109876543", "feesPaid": false, "class": "class4", "email": "robert.hernandez@example.com", "password": "password123" }
+    ],
+    "teachers": [
+      { "id": "teacher1", "name": "Mr. Smith", "gender": "Male", "dob": "1980-03-10", "contact": "9876543211", "salary": 50000, "assignedClass": "class1" },
+      { "id": "teacher2", "name": "Ms. Johnson", "gender": "Female", "dob": "1985-07-15", "contact": "9876543212", "salary": 55000, "assignedClass": "class2" },
+      { "id": "teacher3", "name": "Mr. Brown", "gender": "Male", "dob": "1978-11-10", "contact": "9876543213", "salary": 60000, "assignedClass": "class3" },
+      { "id": "teacher4", "name": "Ms. Davis", "gender": "Female", "dob": "1982-05-15", "contact": "9876543214", "salary": 52000, "assignedClass": "class4" },
+      { "id": "teacher5", "name": "Mr. Miller", "gender": "Male", "dob": "1975-09-20", "contact": "9876543215", "salary": 58000, "assignedClass": "class5" }
+    ],
+    "admins": [
+      { "id": "admin1", "name": "Admin One", "email": "admin1@example.com", "password": "adminpassword1", "role": "admin", "contact": "1234567890" },
+      { "id": "admin2", "name": "Admin Two", "email": "admin2@example.com", "password": "adminpassword2", "role": "admin", "contact": "0987654321" },
+      { "id": "admin3", "name": "Admin Three", "email": "admin3@example.com", "password": "adminpassword3", "role": "admin", "contact": "5678901234" }
+    ]
+  }
+  

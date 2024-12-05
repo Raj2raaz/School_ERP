@@ -1,5 +1,6 @@
+import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LandingHeader from "../LandingPages/LandingHeader";
 import LandingFooter from "../LandingPages/LandingFooter";
 import {
@@ -10,6 +11,9 @@ import {
 import AdminSignupForm from "./AdminSignupForm";
 import TeacherSignupForm from "./TeacherSignupForm";
 import StudentSignupForm from "./StudentSignupForm";
+import { ToastContainer } from "react-toastify";
+
+import {toast} from "react-toastify"
 
 const SignupPage = ({ userType }) => {
   const [formData, setFormData] = useState({
@@ -19,18 +23,18 @@ const SignupPage = ({ userType }) => {
     contact: "",
     password: "",
     confirmPassword: "",
-    feesPaid: false,
-    class: "",
-    salary: "",
-    assignedClass: "",
     email: "",
   });
 
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const navigate = useNavigate();  
+
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -77,10 +81,45 @@ const SignupPage = ({ userType }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle the form submission logic
+  
+    if (userType === "admin") {
+      // Check if passwords match
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Passwords do not match!");
+        return;
+      }
+  
+      try {
+        // Make an API call to the admin signup endpoint
+        const response = await axios.post("http://localhost:5000/admin/add", {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          contact: formData.contact,
+        });
+  
+        toast.success(response.data.message); // Success message from the API
+        // navigate("/admin-dashboard");
+        setTimeout(() => {
+          navigate("/admin-dashboard");
+        }, 1000); 
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          contact: "",
+        });
+      } catch (error) {
+        toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
+      }
+    } else {
+      toast.error("Signup functionality for this user type is not implemented yet.");
+    }
   };
+  
 
   return (
     <>
@@ -96,37 +135,17 @@ const SignupPage = ({ userType }) => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {renderFormFields()}
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-gray-700 font-medium mb-2">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
-              />
-            </div>
+            {error && (
+              <p className="text-red-500 text-sm mt-2 text-center">{error}</p>
+            )}
+            {successMessage && (
+              <p className="text-green-500 text-sm mt-2 text-center">
+                {successMessage}
+              </p>
+            )}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors delay-100"
             >
               Sign Up
             </button>
@@ -143,7 +162,13 @@ const SignupPage = ({ userType }) => {
           </p>
         </div>
       </div>
-
+      <ToastContainer
+            position="top-right"
+            autoClose={2000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeButton={true}
+      />
       <LandingFooter />
     </>
   );

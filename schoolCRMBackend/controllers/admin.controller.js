@@ -1,15 +1,24 @@
 import { adminModel } from "../models/admin.model.js";
 
+import dotenv from 'dotenv';
+
+// import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+
+dotenv.config();
 // Add a new admin
 export const addAdmin = async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
 
+    const hashedPassword = await bcrypt.hash(password,10);
+
     // Create a new admin object
     const newAdmin = new adminModel({
       name,
       email,
-      password,
+      password: hashedPassword,
       contact,
     });
 
@@ -64,5 +73,33 @@ export const deleteAdmin = async (req, res) => {
     res.status(200).json({ message: "Admin deleted successfully!" });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+export const loginAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const admin = await adminModel.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: admin._id, email: admin.email },
+      process.env.JWT_SECRET || 'your_secret_key',
+      { expiresIn: '1h' }
+    );
+
+    res.status(200).json({ message: 'Login successful', token });
+  } catch (error) {
+    console.error("Login Error:", error.message);
+    res.status(500).json({ error: 'An error occurred during login' });
   }
 };
