@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 // import Sidebar from "../LandingPages/Sidebar";
-import TeacherSidebar from '../LandingPages/TeacherSidebar'
+import TeacherSidebar from "../LandingPages/TeacherSidebar";
 
 const TeacherManageClasses = () => {
   const [classes, setClasses] = useState([]);
@@ -21,25 +20,30 @@ const TeacherManageClasses = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-const handleStudentCheckbox = (e, studentId) => {
-  const isChecked = e.target.checked;
+  const handleStudentCheckbox = (e, studentId) => {
+    const isChecked = e.target.checked;
 
-  setFormData((prev) => ({
-    ...prev,
-    students: isChecked
-      ? [...prev.students, studentId] // Add student ID
-      : prev.students.filter((id) => id !== studentId), // Remove student ID
-  }));
-};
-
+    setFormData((prev) => ({
+      ...prev,
+      students: isChecked
+        ? [...prev.students, studentId] // Add student ID
+        : prev.students.filter((id) => id !== studentId), // Remove student ID
+    }));
+  };
 
   // Fetch classes, students, and teachers data
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const classRes = await axios.get("http://localhost:5000/classes/display");
-        const studentRes = await axios.get("http://localhost:5000/students/display");
-        const teacherRes = await axios.get("http://localhost:5000/teachers/display");
+        const classRes = await axios.get(
+          "https://school-erp-cyil.onrender.com/classes/display"
+        );
+        const studentRes = await axios.get(
+          "https://school-erp-cyil.onrender.com/students/display"
+        );
+        const teacherRes = await axios.get(
+          "https://school-erp-cyil.onrender.com/teachers/display"
+        );
 
         setClasses(classRes.data.data);
         setStudents(studentRes.data.data);
@@ -55,7 +59,10 @@ const handleStudentCheckbox = (e, studentId) => {
   // Handle Add Class Form Submit
   const handleAddClass = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/classes/add", formData);
+      const res = await axios.post(
+        "https://school-erp-cyil.onrender.com/classes/add",
+        formData
+      );
       setClasses([...classes, res.data.data]);
       setIsModalOpen(false);
       alert("Class added successfully!");
@@ -67,8 +74,15 @@ const handleStudentCheckbox = (e, studentId) => {
   // Handle Edit Class Form Submit
   const handleEditClass = async () => {
     try {
-      const res = await axios.put(`http://localhost:5000/classes/update/${currentClass._id}`, formData);
-      setClasses(classes.map((cls) => (cls._id === currentClass._id ? res.data.data : cls)));
+      const res = await axios.put(
+        `https://school-erp-cyil.onrender.com/classes/update/${currentClass._id}`,
+        formData
+      );
+      setClasses(
+        classes.map((cls) =>
+          cls._id === currentClass._id ? res.data.data : cls
+        )
+      );
       setIsModalOpen(false);
       alert("Class updated successfully!");
     } catch (error) {
@@ -79,7 +93,9 @@ const handleStudentCheckbox = (e, studentId) => {
   // Handle Delete Class
   const handleDelete = async (classId) => {
     try {
-      await axios.delete(`http://localhost:5000/classes/delete/${classId}`);
+      await axios.delete(
+        `https://school-erp-cyil.onrender.com/classes/delete/${classId}`
+      );
       setClasses(classes.filter((classItem) => classItem._id !== classId));
       alert("Class deleted successfully!");
     } catch (error) {
@@ -120,12 +136,14 @@ const handleStudentCheckbox = (e, studentId) => {
 
   // Handle student selection change (multiple select)
   const handleStudentSelect = (e) => {
-    const selectedStudents = Array.from(e.target.selectedOptions, (option) => option.value);
+    const selectedStudents = Array.from(
+      e.target.selectedOptions,
+      (option) => option.value
+    );
     setFormData({ ...formData, students: selectedStudents });
   };
 
   return (
-    
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       {/* {console.log(classes)} */}
       {/* Sidebar */}
@@ -133,7 +151,9 @@ const handleStudentCheckbox = (e, studentId) => {
 
       {/* Main Content */}
       <div className="flex-1 p-10 space-y-8 overflow-y-auto">
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Manage Classes</h1>
+        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">
+          Manage Classes
+        </h1>
 
         {/* Add Class Button */}
         <button
@@ -158,15 +178,17 @@ const handleStudentCheckbox = (e, studentId) => {
             return (
               <div
                 key={classDetails._id}
-                
                 className="bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
-                <h2 className="text-xl font-semibold text-gray-700">{classDetails.className}</h2>
+                <h2 className="text-xl font-semibold text-gray-700">
+                  {classDetails.className}
+                </h2>
                 <p className="mt-2 text-lg text-gray-600">
                   <strong>Year:</strong> {classDetails.year}
                 </p>
                 <p className="mt-2 text-lg text-gray-600">
-                  <strong>Assigned Teacher:</strong> {classDetails?.teacher?.name || "N/A"}
+                  <strong>Assigned Teacher:</strong>{" "}
+                  {classDetails?.teacher?.name || "N/A"}
                 </p>
                 <p className="mt-2 text-lg text-gray-600">
                   <strong>Number of Students:</strong> {classStudents.length}
@@ -194,15 +216,11 @@ const handleStudentCheckbox = (e, studentId) => {
             );
           })}
         </div>
-
-
-        
       </div>
 
       {/* Modal for Add/Edit Class */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
-
           <div className="bg-white p-8 rounded-lg w-full max-w-lg">
             <h2 className="text-2xl font-bold mb-6">
               {currentClass ? "Edit Class" : "Add Class"}
@@ -283,43 +301,47 @@ const handleStudentCheckbox = (e, studentId) => {
                 </select>
               </div> */}
               <div className="space-y-2">
-  <label htmlFor="students" className="block font-semibold">
-    Students
-  </label>
-  <div className="relative">
-    <div
-      onClick={() => setDropdownOpen(!dropdownOpen)}
-      className="w-full p-2 border rounded-md cursor-pointer bg-white"
-    >
-      {formData.students.length > 0
-        ? `Selected: ${formData.students.length} students`
-        : "Select Students"}
-    </div>
-    {dropdownOpen && (
-      <div className="absolute z-10 mt-1 w-full bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto">
-        {students.map((student) => (
-          <div
-            key={student._id}
-            className="flex items-center p-2 hover:bg-gray-100"
-          >
-            <input
-              type="checkbox"
-              id={`student-${student._id}`}
-              value={student._id}
-              checked={formData.students.includes(student._id)}
-              onChange={(e) => handleStudentCheckbox(e, student._id)}
-              className="mr-2"
-            />
-            <label htmlFor={`student-${student._id}`} className="cursor-pointer">
-              {student.name}
-            </label>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-</div>
-
+                <label htmlFor="students" className="block font-semibold">
+                  Students
+                </label>
+                <div className="relative">
+                  <div
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full p-2 border rounded-md cursor-pointer bg-white"
+                  >
+                    {formData.students.length > 0
+                      ? `Selected: ${formData.students.length} students`
+                      : "Select Students"}
+                  </div>
+                  {dropdownOpen && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto">
+                      {students.map((student) => (
+                        <div
+                          key={student._id}
+                          className="flex items-center p-2 hover:bg-gray-100"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`student-${student._id}`}
+                            value={student._id}
+                            checked={formData.students.includes(student._id)}
+                            onChange={(e) =>
+                              handleStudentCheckbox(e, student._id)
+                            }
+                            className="mr-2"
+                          />
+                          <label
+                            htmlFor={`student-${student._id}`}
+                            className="cursor-pointer"
+                          >
+                            {student.name}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
 
               <div className="space-y-2">
                 <label htmlFor="studentFees" className="block font-semibold">
@@ -353,7 +375,6 @@ const handleStudentCheckbox = (e, studentId) => {
             </form>
           </div>
         </div>
-
       )}
     </div>
   );

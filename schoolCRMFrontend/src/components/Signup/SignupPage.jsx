@@ -13,7 +13,7 @@ import TeacherSignupForm from "./TeacherSignupForm";
 import StudentSignupForm from "./StudentSignupForm";
 import { ToastContainer } from "react-toastify";
 
-import {toast} from "react-toastify"
+import { toast } from "react-toastify";
 
 const SignupPage = ({ userType }) => {
   const [formData, setFormData] = useState({
@@ -28,14 +28,14 @@ const SignupPage = ({ userType }) => {
 
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     if (type === "checkbox") {
       setFormData({
         ...formData,
-        [name]: checked,  // Correctly handle checkbox as Boolean
+        [name]: checked, // Correctly handle checkbox as Boolean
       });
     } else {
       setFormData({
@@ -91,23 +91,25 @@ const SignupPage = ({ userType }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-
     if (userType === "admin") {
       // Check if passwords match
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match!");
         return;
       }
-    
+
       try {
         // Make an API call to the admin signup endpoint
-        const response = await axios.post("http://localhost:5000/admin/add", {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          contact: formData.contact,
-        });
-    
+        const response = await axios.post(
+          "https://school-erp-cyil.onrender.com/admin/add",
+          {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            contact: formData.contact,
+          }
+        );
+
         toast.success(response.data.message); // Success message from the API
         // navigate("/admin-dashboard");
         setTimeout(() => {
@@ -121,7 +123,9 @@ const SignupPage = ({ userType }) => {
           contact: "",
         });
       } catch (error) {
-        toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
+        toast.error(
+          error.response?.data?.error || "Failed to sign up. Please try again."
+        );
       }
     } else if (userType === "teacher") {
       // Check if passwords match
@@ -129,20 +133,23 @@ const SignupPage = ({ userType }) => {
         toast.error("Passwords do not match!");
         return;
       }
-    
+
       try {
         // Make an API call to the teacher signup endpoint
-        const response = await axios.post("http://localhost:5000/teachers/add", {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          contact: formData.contact,
-          gender: formData.gender,
-          dob: formData.dob,
-          salary: formData.salary,
-          assignedClass: formData.assignedClass || null, // Add assigned class, default to null if not assigned
-        });
-    
+        const response = await axios.post(
+          "https://school-erp-cyil.onrender.com/teachers/add",
+          {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            contact: formData.contact,
+            gender: formData.gender,
+            dob: formData.dob,
+            salary: formData.salary,
+            assignedClass: formData.assignedClass || null, // Add assigned class, default to null if not assigned
+          }
+        );
+
         toast.success(response.data.message); // Success message from the API
         // navigate("/teacher-dashboard");
         setTimeout(() => {
@@ -160,7 +167,9 @@ const SignupPage = ({ userType }) => {
           assignedClass: "",
         });
       } catch (error) {
-        toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
+        toast.error(
+          error.response?.data?.error || "Failed to sign up. Please try again."
+        );
       }
     } else if (userType === "student") {
       // Check if passwords match
@@ -168,20 +177,23 @@ const SignupPage = ({ userType }) => {
         toast.error("Passwords do not match!");
         return;
       }
-    
+
       try {
         // Make an API call to the student signup endpoint
-        const response = await axios.post("http://localhost:5000/students/signup", {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-          contact: formData.contact,
-          gender: formData.gender,
-          dob: formData.dob,
-          feesPaid: formData.feesPaid,
-          class: formData.class, // Use the class field here
-        });
-    
+        const response = await axios.post(
+          "https://school-erp-cyil.onrender.com/students/signup",
+          {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            contact: formData.contact,
+            gender: formData.gender,
+            dob: formData.dob,
+            feesPaid: formData.feesPaid,
+            class: formData.class, // Use the class field here
+          }
+        );
+
         toast.success(response.data.message); // Success message from the API
         // navigate("/student-dashboard");
         setTimeout(() => {
@@ -200,14 +212,16 @@ const SignupPage = ({ userType }) => {
         });
       } catch (error) {
         console.log(error.response?.data?.error);
-        toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
+        toast.error(
+          error.response?.data?.error || "Failed to sign up. Please try again."
+        );
       }
     } else {
-      toast.error("Signup functionality for this user type is not implemented yet.");
+      toast.error(
+        "Signup functionality for this user type is not implemented yet."
+      );
     }
-    
   };
-  
 
   return (
     <>
@@ -251,11 +265,11 @@ const SignupPage = ({ userType }) => {
         </div>
       </div>
       <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeButton={true}
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeButton={true}
       />
       <LandingFooter />
     </>

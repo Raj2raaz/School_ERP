@@ -8,7 +8,9 @@ const StudentSignupForm = ({ formData, handleInputChange }) => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/classes/display");
+        const response = await axios.get(
+          "https://school-erp-cyil.onrender.com/classes/display"
+        );
         setClasses(response.data.data); // Assuming the response structure contains the class data
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -46,7 +48,9 @@ const StudentSignupForm = ({ formData, handleInputChange }) => {
         </select>
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Date of Birth</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Date of Birth
+        </label>
         <input
           type="date"
           name="dob"
@@ -67,7 +71,9 @@ const StudentSignupForm = ({ formData, handleInputChange }) => {
         />
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Fees Paid</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Fees Paid
+        </label>
         <input
           type="checkbox"
           name="feesPaid"
@@ -116,7 +122,9 @@ const StudentSignupForm = ({ formData, handleInputChange }) => {
         />
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Confirm Password</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Confirm Password
+        </label>
         <input
           type="password"
           name="confirmPassword"

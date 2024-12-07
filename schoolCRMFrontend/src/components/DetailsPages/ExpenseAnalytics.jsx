@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Register necessary Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ExpenseAnalytics = () => {
   const [teachers, setTeachers] = useState([]); // State to store all teachers
@@ -20,7 +35,9 @@ const ExpenseAnalytics = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/teachers/display");
+        const res = await axios.get(
+          "https://school-erp-cyil.onrender.com/teachers/display"
+        );
         setTeachers(res.data.data); // Set all teachers
       } catch (error) {
         console.error("Error fetching teachers:", error);
@@ -31,57 +48,77 @@ const ExpenseAnalytics = () => {
 
   // Fetch teacher and class details based on selected teacher
 
-
-useEffect(() => {
+  useEffect(() => {
     if (selectedTeacher) {
       const fetchTeacherDetails = async () => {
         try {
-          const res = await axios.get(`http://localhost:5000/teachers/find/${selectedTeacher}`);
+          const res = await axios.get(
+            `https://school-erp-cyil.onrender.com/teachers/find/${selectedTeacher}`
+          );
           const teacherData = res.data.data;
-  
+
           setTeacherSalary(teacherData.salary); // Set teacher salary
-  
+
           let totalIncome = 0;
-  
+
           if (Array.isArray(teacherData.assignedClass)) {
             for (let classItem of teacherData.assignedClass) {
-              const classRes = await axios.get(`http://localhost:5000/classes/find/${classItem._id}`);
+              const classRes = await axios.get(
+                `https://school-erp-cyil.onrender.com/classes/find/${classItem._id}`
+              );
               const classDetails = classRes.data.data;
-  
+
               // Use course fees from the class and check students' feesPaid status
-              const classIncome = classDetails.students.reduce((total, student) => {
-                return total + (student.feesPaid ? classDetails.courseFee : 0);
-              }, 0);
-  
+              const classIncome = classDetails.students.reduce(
+                (total, student) => {
+                  return (
+                    total + (student.feesPaid ? classDetails.courseFee : 0)
+                  );
+                },
+                0
+              );
+
               totalIncome += classIncome;
             }
-          } else if (teacherData.assignedClass && teacherData.assignedClass._id) {
-            const classRes = await axios.get(`http://localhost:5000/classes/find/${teacherData.assignedClass._id}`);
+          } else if (
+            teacherData.assignedClass &&
+            teacherData.assignedClass._id
+          ) {
+            const classRes = await axios.get(
+              `https://school-erp-cyil.onrender.com/classes/find/${teacherData.assignedClass._id}`
+            );
             const classDetails = classRes.data.data;
 
             // console.log("Class Details:", classDetails);
-  
+
             // Use course fees from the class and check students' feesPaid status
-            const classIncome = classDetails.students.reduce((total, student) => {
-              return total + (student.feesPaid ? classDetails.studentFees : 0);
-            }, 0);
-  
+            const classIncome = classDetails.students.reduce(
+              (total, student) => {
+                return (
+                  total + (student.feesPaid ? classDetails.studentFees : 0)
+                );
+              },
+              0
+            );
+
             totalIncome += classIncome;
           } else {
-            console.error("Assigned class data is invalid:", teacherData.assignedClass);
+            console.error(
+              "Assigned class data is invalid:",
+              teacherData.assignedClass
+            );
           }
-  
-        //   console.log("Total Income:", totalIncome);
+
+          //   console.log("Total Income:", totalIncome);
           setIncome(totalIncome); // Update income state
         } catch (error) {
           console.error("Error fetching teacher details:", error);
         }
       };
-  
+
       fetchTeacherDetails();
     }
   }, [selectedTeacher]);
-  
 
   // Calculate expenses (monthly or yearly)
   const calculateExpenses = () => {
@@ -121,7 +158,10 @@ useEffect(() => {
     plugins: {
       tooltip: {
         callbacks: {
-          label: (context) => `${context.raw} ${viewType === "monthly" ? "per Month" : "per Year"}`,
+          label: (context) =>
+            `${context.raw} ${
+              viewType === "monthly" ? "per Month" : "per Year"
+            }`,
         },
       },
     },
@@ -130,11 +170,15 @@ useEffect(() => {
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       <div className="flex-1 p-10 space-y-8 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Expense Analytics</h1>
+        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">
+          Expense Analytics
+        </h1>
 
         {/* Teacher Selection */}
         <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Select Teacher</h2>
+          <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+            Select Teacher
+          </h2>
           <select
             className="p-2 border border-gray-300 rounded"
             value={selectedTeacher}
@@ -153,13 +197,17 @@ useEffect(() => {
         <div className="mt-4">
           <label className="mr-2">View Type:</label>
           <button
-            className={`py-2 px-4 rounded ${viewType === "monthly" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+            className={`py-2 px-4 rounded ${
+              viewType === "monthly" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
             onClick={() => setViewType("monthly")}
           >
             Monthly
           </button>
           <button
-            className={`ml-2 py-2 px-4 rounded ${viewType === "yearly" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+            className={`ml-2 py-2 px-4 rounded ${
+              viewType === "yearly" ? "bg-blue-500 text-white" : "bg-gray-200"
+            }`}
             onClick={() => setViewType("yearly")}
           >
             Yearly
@@ -169,7 +217,9 @@ useEffect(() => {
         {/* Display Chart */}
         {selectedTeacher && (
           <div className="mt-6">
-            <h2 className="text-2xl font-semibold text-gray-700 mb-4">Analytics</h2>
+            <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+              Analytics
+            </h2>
             <Bar data={chartData} options={options} />
           </div>
         )}

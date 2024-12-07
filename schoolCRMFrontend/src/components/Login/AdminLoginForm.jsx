@@ -16,16 +16,19 @@ const AdminLoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/admin/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://school-erp-cyil.onrender.com/admin/login",
+        {
+          email,
+          password,
+        }
+      );
       // alert(response.data.message);
       toast.success(response.data.message); // Use toast to show success message
       // console.log(response.data.message);
       setTimeout(() => {
         navigate("/admin-dashboard");
-      }, 1000); 
+      }, 1000);
     } catch (error) {
       // setErrorMessage(error.response?.data?.error || "Failed to login. Try again!");
       toast.error(error.response?.data?.error || "Failed to login. Try again!"); // Use toast for error message
@@ -39,7 +42,9 @@ const AdminLoginForm = () => {
         <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-sm">
           <div className="text-center mb-6">
             <FaUserShield className="mx-auto text-5xl text-blue-600" />
-            <h2 className="text-3xl font-bold text-gray-800 mt-2">Admin Login</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mt-2">
+              Admin Login
+            </h2>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

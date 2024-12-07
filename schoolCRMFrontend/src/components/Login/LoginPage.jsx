@@ -78,16 +78,19 @@
 
 // export default LoginPage;
 
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
-import LandingHeader from '../LandingPages/LandingHeader';
-import LandingFooter from '../LandingPages/LandingFooter';
-import { FaUserShield, FaChalkboardTeacher, FaUserGraduate } from 'react-icons/fa';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import LandingHeader from "../LandingPages/LandingHeader";
+import LandingFooter from "../LandingPages/LandingFooter";
+import {
+  FaUserShield,
+  FaChalkboardTeacher,
+  FaUserGraduate,
+} from "react-icons/fa";
 
 const LoginPage = ({ userType }) => {
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -96,34 +99,35 @@ const LoginPage = ({ userType }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const endpoint = {
-      admin: 'http://localhost:5000/admin/login',
-      teacher: 'http://localhost:5000/teacher/login',
-      student: 'http://localhost:5000/student/login',
+      admin: "https://school-erp-cyil.onrender.com/admin/login",
+      teacher: "https://school-erp-cyil.onrender.com/teacher/login",
+      student: "https://school-erp-cyil.onrender.com/student/login",
     }[userType];
-  
+
     if (!endpoint) {
-      alert('Login functionality for this user type is not implemented yet.');
+      alert("Login functionality for this user type is not implemented yet.");
       return;
     }
-  
+
     try {
       const response = await axios.post(endpoint, formData);
       alert(response.data.message);
-  
+
       // Save token and redirect
-      localStorage.setItem('token', response.data.token);
+      localStorage.setItem("token", response.data.token);
     } catch (error) {
-      alert(error.response?.data?.error || 'Login failed. Please try again.');
+      alert(error.response?.data?.error || "Login failed. Please try again.");
     }
   };
-  
 
   const getIcon = () => {
-    if (userType === 'admin') return <FaUserShield className="text-3xl mx-2" />;
-    if (userType === 'teacher') return <FaChalkboardTeacher className="text-3xl mx-2" />;
-    if (userType === 'student') return <FaUserGraduate className="text-3xl mx-2" />;
+    if (userType === "admin") return <FaUserShield className="text-3xl mx-2" />;
+    if (userType === "teacher")
+      return <FaChalkboardTeacher className="text-3xl mx-2" />;
+    if (userType === "student")
+      return <FaUserGraduate className="text-3xl mx-2" />;
     return null;
   };
 
@@ -141,7 +145,9 @@ const LoginPage = ({ userType }) => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Email Address</label>
+              <label className="block text-gray-700 font-medium mb-2">
+                Email Address
+              </label>
               <input
                 type="email"
                 name="email"
@@ -152,7 +158,9 @@ const LoginPage = ({ userType }) => {
               />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Password</label>
+              <label className="block text-gray-700 font-medium mb-2">
+                Password
+              </label>
               <input
                 type="password"
                 name="password"
@@ -170,8 +178,11 @@ const LoginPage = ({ userType }) => {
             </button>
           </form>
           <p className="text-center text-gray-600 mt-4">
-            Don’t have an account?{' '}
-            <Link to={`/signup/${userType}`} className="text-blue-500 hover:underline">
+            Don’t have an account?{" "}
+            <Link
+              to={`/signup/${userType}`}
+              className="text-blue-500 hover:underline"
+            >
               Sign up
             </Link>
           </p>

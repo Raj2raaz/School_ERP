@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function StudentComponet() {
   const [student, setStudent] = useState({
-    name: '',
-    gender: '',
-    dob: '',
-    contact: '',
+    name: "",
+    gender: "",
+    dob: "",
+    contact: "",
     feesPaid: false,
     class: null,
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const [students, setStudents] = useState([]);
   const [showTable, setShowTable] = useState(false);
@@ -19,13 +19,17 @@ function StudentComponet() {
 
   const [classes, setClasses] = useState([]);
 
-  
-
   useEffect(() => {
     const fetchClassesWithDefault = async () => {
       try {
-        const defaultClass = { _id: null, className: "Not Yet Allocated", year: "" };
-        const response = await axios.get("http://localhost:5000/classes/display");
+        const defaultClass = {
+          _id: null,
+          className: "Not Yet Allocated",
+          year: "",
+        };
+        const response = await axios.get(
+          "https://school-erp-cyil.onrender.com/classes/display"
+        );
         const updatedClasses = [defaultClass, ...response.data.data];
         setClasses(updatedClasses);
       } catch (err) {
@@ -34,21 +38,22 @@ function StudentComponet() {
     };
     fetchClassesWithDefault();
   }, []);
-  
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setStudent({ ...student, [name]: type === 'checkbox' ? checked : value });
+    setStudent({ ...student, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear any existing errors
+    setError(""); // Clear any existing errors
     try {
       if (editingStudentId) {
         // If we are editing an existing student
-        const response = await axios.put(`http://localhost:5000/students/update/${editingStudentId}`, student);
+        const response = await axios.put(
+          `https://school-erp-cyil.onrender.com/students/update/${editingStudentId}`,
+          student
+        );
         alert(response.data.message);
         // Update the student in the state
         setStudents((prevStudents) =>
@@ -56,31 +61,43 @@ function StudentComponet() {
             s._id === editingStudentId ? { ...s, ...student } : s
           )
         );
-      } 
-      else {
-        const response = await axios.post('http://localhost:5000/students/add', student);
+      } else {
+        const response = await axios.post(
+          "https://school-erp-cyil.onrender.com/students/add",
+          student
+        );
         alert(response.data.message);
         // console.log(response.data);
-        if(showTable){
+        if (showTable) {
           setStudents((prevStudents) => [response.data.data, ...prevStudents]);
         }
       }
-      setStudent({ name: '', gender: '', dob: '', contact: '', feesPaid: false }); // Reset form
+      setStudent({
+        name: "",
+        gender: "",
+        dob: "",
+        contact: "",
+        feesPaid: false,
+      }); // Reset form
       setEditingStudentId(null); // Reset editing state
     } catch (err) {
-      const errorMessage = err.response?.data?.error || 'Failed to add student';
+      const errorMessage = err.response?.data?.error || "Failed to add student";
       setError(errorMessage);
     }
   };
 
   const fetchAllStudents = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/students/display');
-      const sortedStudents = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const response = await axios.get(
+        "https://school-erp-cyil.onrender.com/students/display"
+      );
+      const sortedStudents = response.data.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
       setStudents(sortedStudents);
       setShowTable(true);
     } catch (err) {
-      alert('Failed to fetch students. Please try again.');
+      alert("Failed to fetch students. Please try again.");
     }
   };
 
@@ -88,7 +105,7 @@ function StudentComponet() {
     setStudent({
       name: studentData.name,
       gender: studentData.gender,
-      dob: studentData.dob.split('T')[0],
+      dob: studentData.dob.split("T")[0],
       contact: studentData.contact,
       feesPaid: studentData.feesPaid,
     });
@@ -97,16 +114,24 @@ function StudentComponet() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/students/delete/${id}`);
+      const response = await axios.delete(
+        `https://school-erp-cyil.onrender.com/students/delete/${id}`
+      );
       alert(response.data.message);
-      setStudents((prevStudents) => prevStudents.filter((student) => student._id !== id)); // Remove student from state
-      setStudent({ name: '', gender: '', dob: '', contact: '', feesPaid: false,  }); // Reset form
+      setStudents((prevStudents) =>
+        prevStudents.filter((student) => student._id !== id)
+      ); // Remove student from state
+      setStudent({
+        name: "",
+        gender: "",
+        dob: "",
+        contact: "",
+        feesPaid: false,
+      }); // Reset form
     } catch (err) {
-      alert('Failed to delete student. Please try again.');
+      alert("Failed to delete student. Please try again.");
     }
   };
-
-
 
   return (
     <div className="p-4">
@@ -156,9 +181,9 @@ function StudentComponet() {
 
         <select
           name="class"
-          value={student.class || ''}
+          value={student.class || ""}
           onChange={(e) => {
-            const selectedValue = e.target.value === '' ? null : e.target.value;
+            const selectedValue = e.target.value === "" ? null : e.target.value;
             setStudent({ ...student, class: selectedValue });
           }}
           className="p-2 border rounded"
@@ -171,7 +196,6 @@ function StudentComponet() {
             </option>
           ))}
         </select>
-
 
         <label className="flex items-center gap-2">
           <input
@@ -187,68 +211,75 @@ function StudentComponet() {
         </button>
       </form>
       <div className="mt-4">
-  <button
-    onClick={fetchAllStudents}
-    className="p-2 bg-green-500 text-white rounded"
-  >
-    All Students
-  </button>
-  {showTable && (
-    <div className="mt-4">
-      <table className="table-auto w-full border-collapse border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="border border-gray-300 p-2">Name</th>
-            <th className="border border-gray-300 p-2">Gender</th>
-            <th className="border border-gray-300 p-2">Date of Birth</th>
-            <th className="border border-gray-300 p-2">Contact</th>
-            <th className="border border-gray-300 p-2">Class</th>
-            <th className="border border-gray-300 p-2">Fees Paid</th>
-            <th className="border border-gray-300 p-2">Update / Delete</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((student, index) => (
-            <tr key={index} className="text-center">
-              <td className="border border-gray-300 p-2">{student.name}</td>
-              <td className="border border-gray-300 p-2">{student.gender}</td>
-              <td className="border border-gray-300 p-2">
-                {new Date(student.dob).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </td>
-              <td className="border border-gray-300 p-2">{student.contact}</td>
-              <td className="border border-gray-300 p-2">
-                {student.class?.className || "Not Yet Allocated"}
-              </td>
+        <button
+          onClick={fetchAllStudents}
+          className="p-2 bg-green-500 text-white rounded"
+        >
+          All Students
+        </button>
+        {showTable && (
+          <div className="mt-4">
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 p-2">Name</th>
+                  <th className="border border-gray-300 p-2">Gender</th>
+                  <th className="border border-gray-300 p-2">Date of Birth</th>
+                  <th className="border border-gray-300 p-2">Contact</th>
+                  <th className="border border-gray-300 p-2">Class</th>
+                  <th className="border border-gray-300 p-2">Fees Paid</th>
+                  <th className="border border-gray-300 p-2">
+                    Update / Delete
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {students.map((student, index) => (
+                  <tr key={index} className="text-center">
+                    <td className="border border-gray-300 p-2">
+                      {student.name}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {student.gender}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {new Date(student.dob).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {student.contact}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {student.class?.className || "Not Yet Allocated"}
+                    </td>
 
-              <td className="border border-gray-300 p-2">
-                {student.feesPaid ? 'Yes' : 'No'}
-              </td>
-              <td className="border p-2 flex gap-2 justify-around">
-                <button
-                  onClick={() => handleEdit(student)}
-                  className="p-2 bg-yellow-400 text-white rounded"
-                >
-                  ✏️
-                </button>
-                <button
-                  onClick={() => handleDelete(student._id)}
-                  className="p-2 bg-red-500 text-white rounded"
-                >
-                  🗑️
-                </button>
-              </td>
-
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )}
-</div>
+                    <td className="border border-gray-300 p-2">
+                      {student.feesPaid ? "Yes" : "No"}
+                    </td>
+                    <td className="border p-2 flex gap-2 justify-around">
+                      <button
+                        onClick={() => handleEdit(student)}
+                        className="p-2 bg-yellow-400 text-white rounded"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => handleDelete(student._id)}
+                        className="p-2 bg-red-500 text-white rounded"
+                      >
+                        🗑️
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,10 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Register necessary Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ClassAnalytics = () => {
   const [classes, setClasses] = useState([]); // State for storing all classes
@@ -16,7 +31,9 @@ const ClassAnalytics = () => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/classes/display");
+        const res = await axios.get(
+          "https://school-erp-cyil.onrender.com/classes/display"
+        );
         setClasses(res.data.data); // Set all classes to the state
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -31,12 +48,20 @@ const ClassAnalytics = () => {
     if (selectedClassId) {
       const fetchClassData = async () => {
         try {
-          const res = await axios.get(`http://localhost:5000/classes/find/${selectedClassId}`);
+          const res = await axios.get(
+            `https://school-erp-cyil.onrender.com/classes/find/${selectedClassId}`
+          );
           setClassDetails(res.data.data); // Set class details
-          
+
           // Calculate gender distribution
-          const maleCount = res.data.data.students?.filter(student => student.gender === 'Male').length || 0;
-          const femaleCount = res.data.data.students?.filter(student => student.gender === 'Female').length || 0;
+          const maleCount =
+            res.data.data.students?.filter(
+              (student) => student.gender === "Male"
+            ).length || 0;
+          const femaleCount =
+            res.data.data.students?.filter(
+              (student) => student.gender === "Female"
+            ).length || 0;
           setGenderData({ male: maleCount, female: femaleCount }); // Set gender data
         } catch (error) {
           console.error("Error fetching class data:", error);
@@ -79,15 +104,21 @@ const ClassAnalytics = () => {
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       <div className="flex-1 p-10 space-y-8 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Class List</h1>
+        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">
+          Class List
+        </h1>
 
         {/* Table to Display All Classes */}
         <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg border border-gray-200">
           <table className="min-w-full table-auto">
             <thead>
               <tr>
-                <th className="px-4 py-2 text-left font-semibold text-gray-700">Class Name</th>
-                <th className="px-4 py-2 text-left font-semibold text-gray-700">Year</th>
+                <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                  Class Name
+                </th>
+                <th className="px-4 py-2 text-left font-semibold text-gray-700">
+                  Year
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -110,19 +141,26 @@ const ClassAnalytics = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
             {/* Class Details Section */}
             <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-              <h2 className="text-2xl font-semibold text-gray-700">{classDetails.className}</h2>
+              <h2 className="text-2xl font-semibold text-gray-700">
+                {classDetails.className}
+              </h2>
               <p className="mt-2 text-lg text-gray-600">
                 <strong>Year:</strong> {classDetails.year}
               </p>
               <p className="mt-2 text-lg text-gray-600">
-                <strong>Assigned Teacher:</strong> {classDetails.teacher?.name || "No teacher assigned"}
+                <strong>Assigned Teacher:</strong>{" "}
+                {classDetails.teacher?.name || "No teacher assigned"}
               </p>
 
-              <h3 className="mt-4 text-lg font-semibold text-gray-700">Students List:</h3>
+              <h3 className="mt-4 text-lg font-semibold text-gray-700">
+                Students List:
+              </h3>
               <ul className="mt-2">
                 {classDetails.students?.length > 0 ? (
                   classDetails.students.map((student) => (
-                    <li key={student._id} className="text-gray-600">{student.name}</li>
+                    <li key={student._id} className="text-gray-600">
+                      {student.name}
+                    </li>
                   ))
                 ) : (
                   <li className="text-gray-600">No students available</li>
@@ -131,14 +169,20 @@ const ClassAnalytics = () => {
 
               {/* Display Male and Female Count */}
               <div className="mt-4">
-                <p className="text-lg text-gray-600">Male Students: {genderData.male}</p>
-                <p className="text-lg text-gray-600">Female Students: {genderData.female}</p>
+                <p className="text-lg text-gray-600">
+                  Male Students: {genderData.male}
+                </p>
+                <p className="text-lg text-gray-600">
+                  Female Students: {genderData.female}
+                </p>
               </div>
             </div>
 
             {/* Gender Ratio Graph Section */}
             <div className="bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4">Gender Distribution</h2>
+              <h2 className="text-2xl font-semibold text-gray-700 mb-4">
+                Gender Distribution
+              </h2>
               <Bar data={chartData} options={options} />
             </div>
           </div>

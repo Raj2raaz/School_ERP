@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function ClassComponent() {
   const [classData, setClassData] = useState({
-    name: '',
-    year: '',
-    teacher: '',
-    studentFees: '',
+    name: "",
+    year: "",
+    teacher: "",
+    studentFees: "",
     students: [],
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const [classes, setClasses] = useState([]);
   const [showTable, setShowTable] = useState(false);
@@ -23,13 +23,13 @@ function ClassComponent() {
     const fetchTeachersAndStudents = async () => {
       try {
         const [teachersRes, studentsRes] = await Promise.all([
-          axios.get('http://localhost:5000/teachers/display'),
-          axios.get('http://localhost:5000/students/display'),
+          axios.get("https://school-erp-cyil.onrender.com/teachers/display"),
+          axios.get("https://school-erp-cyil.onrender.com/students/display"),
         ]);
         setTeachers(teachersRes.data.data);
         setStudents(studentsRes.data.data);
       } catch (err) {
-        alert('Failed to fetch teachers or students. Please try again.');
+        alert("Failed to fetch teachers or students. Please try again.");
       }
     };
     fetchTeachersAndStudents();
@@ -37,27 +37,36 @@ function ClassComponent() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (name === 'students') {
-      const students = Array.from(e.target.selectedOptions, option => option.value);
+    if (name === "students") {
+      const students = Array.from(
+        e.target.selectedOptions,
+        (option) => option.value
+      );
       setClassData({ ...classData, [name]: students });
     } else {
-      setClassData({ ...classData, [name]: type === 'checkbox' ? checked : value });
+      setClassData({
+        ...classData,
+        [name]: type === "checkbox" ? checked : value,
+      });
     }
   };
 
   const handleSubmit = async (e) => {
     console.log(classData);
     e.preventDefault();
-    setError(''); // Clear any existing errors
+    setError(""); // Clear any existing errors
 
     if (!classData.name) {
-        setError('Class Name is required');
-        return; // Prevent form submission if 'name' is missing
+      setError("Class Name is required");
+      return; // Prevent form submission if 'name' is missing
     }
     try {
       if (editingClassId) {
         // If we are editing an existing class
-        const response = await axios.put(`http://localhost:5000/classes/update/${editingClassId}`, classData);
+        const response = await axios.put(
+          `https://school-erp-cyil.onrender.com/classes/update/${editingClassId}`,
+          classData
+        );
         alert(response.data.message);
         setClasses((prevClasses) =>
           prevClasses.map((c) =>
@@ -65,28 +74,41 @@ function ClassComponent() {
           )
         );
       } else {
-        const response = await axios.post('http://localhost:5000/classes/add', classData);
+        const response = await axios.post(
+          "https://school-erp-cyil.onrender.com/classes/add",
+          classData
+        );
         alert(response.data.message);
         if (showTable) {
           setClasses((prevClasses) => [response.data.data, ...prevClasses]);
         }
       }
-      setClassData({ name: '', year: '', teacher: '', studentFees: '', students: [] });
+      setClassData({
+        name: "",
+        year: "",
+        teacher: "",
+        studentFees: "",
+        students: [],
+      });
       setEditingClassId(null); // Reset editing state
     } catch (err) {
-      const errorMessage = err.response?.data?.error || 'Failed to add class';
+      const errorMessage = err.response?.data?.error || "Failed to add class";
       setError(errorMessage);
     }
   };
 
   const fetchAllClasses = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/classes/display');
-      const sortedClasses = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const response = await axios.get(
+        "https://school-erp-cyil.onrender.com/classes/display"
+      );
+      const sortedClasses = response.data.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
       setClasses(sortedClasses);
       setShowTable(true);
     } catch (err) {
-      alert('Failed to fetch classes. Please try again.');
+      alert("Failed to fetch classes. Please try again.");
     }
   };
 
@@ -103,12 +125,20 @@ function ClassComponent() {
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/classes/delete/${id}`);
+      const response = await axios.delete(
+        `https://school-erp-cyil.onrender.com/classes/delete/${id}`
+      );
       alert(response.data.message);
       setClasses((prevClasses) => prevClasses.filter((cls) => cls._id !== id));
-      setClassData({ name: '', year: '', teacher: '', studentFees: '', students: [] }); // Reset form
+      setClassData({
+        name: "",
+        year: "",
+        teacher: "",
+        studentFees: "",
+        students: [],
+      }); // Reset form
     } catch (err) {
-      alert('Failed to delete class. Please try again.');
+      alert("Failed to delete class. Please try again.");
     }
   };
 
@@ -194,7 +224,9 @@ function ClassComponent() {
                   <th className="border border-gray-300 p-2">Teacher</th>
                   <th className="border border-gray-300 p-2">Student Fees</th>
                   <th className="border border-gray-300 p-2">Students</th>
-                  <th className="border border-gray-300 p-2">Update / Delete</th>
+                  <th className="border border-gray-300 p-2">
+                    Update / Delete
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -202,10 +234,14 @@ function ClassComponent() {
                   <tr key={cls._id} className="text-center">
                     <td className="border border-gray-300 p-2">{cls.name}</td>
                     <td className="border border-gray-300 p-2">{cls.year}</td>
-                    <td className="border border-gray-300 p-2">{cls.teacher.name}</td>
-                    <td className="border border-gray-300 p-2">{cls.studentFees}</td>
                     <td className="border border-gray-300 p-2">
-                      {cls.students.map((student) => student.name).join(', ')}
+                      {cls.teacher.name}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {cls.studentFees}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {cls.students.map((student) => student.name).join(", ")}
                     </td>
                     <td className="border p-2 flex gap-2 justify-around">
                       <button

@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function TeacherComponent() {
   const [teacher, setTeacher] = useState({
-    name: '',
-    gender: '',
-    dob: '',
-    contact: '',
-    salary: '',
+    name: "",
+    gender: "",
+    dob: "",
+    contact: "",
+    salary: "",
     assignedClass: null,
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const [teachers, setTeachers] = useState([]);
   const [showTable, setShowTable] = useState(false);
@@ -22,8 +22,14 @@ function TeacherComponent() {
   useEffect(() => {
     const fetchClassesWithDefault = async () => {
       try {
-        const defaultClass = { _id: null, className: "Not Yet Allocated", year: "" };
-        const response = await axios.get("http://localhost:5000/classes/display");
+        const defaultClass = {
+          _id: null,
+          className: "Not Yet Allocated",
+          year: "",
+        };
+        const response = await axios.get(
+          "https://school-erp-cyil.onrender.com/classes/display"
+        );
         const updatedClasses = [defaultClass, ...response.data.data];
         setClasses(updatedClasses);
       } catch (err) {
@@ -35,16 +41,19 @@ function TeacherComponent() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setTeacher({ ...teacher, [name]: type === 'checkbox' ? checked : value });
+    setTeacher({ ...teacher, [name]: type === "checkbox" ? checked : value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear any existing errors
+    setError(""); // Clear any existing errors
     try {
       if (editingTeacherId) {
         // If we are editing an existing teacher
-        const response = await axios.put(`http://localhost:5000/teachers/update/${editingTeacherId}`, teacher);
+        const response = await axios.put(
+          `https://school-erp-cyil.onrender.com/teachers/update/${editingTeacherId}`,
+          teacher
+        );
         alert(response.data.message);
         // Update the teacher in the state
         setTeachers((prevTeachers) =>
@@ -53,28 +62,42 @@ function TeacherComponent() {
           )
         );
       } else {
-        const response = await axios.post('http://localhost:5000/teachers/add', teacher);
+        const response = await axios.post(
+          "https://school-erp-cyil.onrender.com/teachers/add",
+          teacher
+        );
         alert(response.data.message);
         if (showTable) {
           setTeachers((prevTeachers) => [response.data.data, ...prevTeachers]);
         }
       }
-      setTeacher({ name: '', gender: '', dob: '', contact: '', salary: '', assignedClass: null }); // Reset form
+      setTeacher({
+        name: "",
+        gender: "",
+        dob: "",
+        contact: "",
+        salary: "",
+        assignedClass: null,
+      }); // Reset form
       setEditingTeacherId(null); // Reset editing state
     } catch (err) {
-      const errorMessage = err.response?.data?.error || 'Failed to add teacher';
+      const errorMessage = err.response?.data?.error || "Failed to add teacher";
       setError(errorMessage);
     }
   };
 
   const fetchAllTeachers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/teachers/display');
-      const sortedTeachers = response.data.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      const response = await axios.get(
+        "https://school-erp-cyil.onrender.com/teachers/display"
+      );
+      const sortedTeachers = response.data.data.sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
       setTeachers(sortedTeachers);
       setShowTable(true);
     } catch (err) {
-      alert('Failed to fetch teachers. Please try again.');
+      alert("Failed to fetch teachers. Please try again.");
     }
   };
 
@@ -82,22 +105,35 @@ function TeacherComponent() {
     setTeacher({
       name: teacherData.name,
       gender: teacherData.gender,
-      dob: teacherData.dob.split('T')[0],
+      dob: teacherData.dob.split("T")[0],
       contact: teacherData.contact,
       salary: teacherData.salary,
-      assignedClass: teacherData.assignedClass ? teacherData.assignedClass._id : null,
+      assignedClass: teacherData.assignedClass
+        ? teacherData.assignedClass._id
+        : null,
     });
     setEditingTeacherId(teacherData._id); // Set the ID of the teacher being edited
   };
 
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/teachers/delete/${id}`);
+      const response = await axios.delete(
+        `https://school-erp-cyil.onrender.com/teachers/delete/${id}`
+      );
       alert(response.data.message);
-      setTeachers((prevTeachers) => prevTeachers.filter((teacher) => teacher._id !== id)); // Remove teacher from state
-      setTeacher({ name: '', gender: '', dob: '', contact: '', salary: '', assignedClass: null }); // Reset form
+      setTeachers((prevTeachers) =>
+        prevTeachers.filter((teacher) => teacher._id !== id)
+      ); // Remove teacher from state
+      setTeacher({
+        name: "",
+        gender: "",
+        dob: "",
+        contact: "",
+        salary: "",
+        assignedClass: null,
+      }); // Reset form
     } catch (err) {
-      alert('Failed to delete teacher. Please try again.');
+      alert("Failed to delete teacher. Please try again.");
     }
   };
 
@@ -157,8 +193,10 @@ function TeacherComponent() {
         />
         <select
           name="assignedClass"
-          value={teacher.assignedClass || ''}
-          onChange={(e) => setTeacher({ ...teacher, assignedClass: e.target.value })}
+          value={teacher.assignedClass || ""}
+          onChange={(e) =>
+            setTeacher({ ...teacher, assignedClass: e.target.value })
+          }
           className="p-2 border rounded"
         >
           {classes.map((cls) => (
@@ -190,23 +228,33 @@ function TeacherComponent() {
                   <th className="border border-gray-300 p-2">Contact</th>
                   <th className="border border-gray-300 p-2">Salary</th>
                   <th className="border border-gray-300 p-2">Assigned Class</th>
-                  <th className="border border-gray-300 p-2">Update / Delete</th>
+                  <th className="border border-gray-300 p-2">
+                    Update / Delete
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {teachers.map((teacher, index) => (
                   <tr key={index} className="text-center">
-                    <td className="border border-gray-300 p-2">{teacher.name}</td>
-                    <td className="border border-gray-300 p-2">{teacher.gender}</td>
                     <td className="border border-gray-300 p-2">
-                      {new Date(teacher.dob).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
+                      {teacher.name}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {teacher.gender}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {new Date(teacher.dob).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })}
                     </td>
-                    <td className="border border-gray-300 p-2">{teacher.contact}</td>
-                    <td className="border border-gray-300 p-2">{teacher.salary}</td>
+                    <td className="border border-gray-300 p-2">
+                      {teacher.contact}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {teacher.salary}
+                    </td>
                     <td className="border border-gray-300 p-2">
                       {teacher.assignedClass?.className || "Not Yet Allocated"}
                     </td>

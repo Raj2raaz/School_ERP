@@ -16,16 +16,21 @@ const TeacherLoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/teachers/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://school-erp-cyil.onrender.com/teachers/login",
+        {
+          email,
+          password,
+        }
+      );
       toast.success(response.data.message); // Show success toast
       setTimeout(() => {
-       navigate("/teacher-dashboard"); // Replace with actual teacher dashboard route
+        navigate("/teacher-dashboard"); // Replace with actual teacher dashboard route
       }, 2000);
     } catch (error) {
-      setErrorMessage(error.response?.data?.error || "Failed to login. Try again!");
+      setErrorMessage(
+        error.response?.data?.error || "Failed to login. Try again!"
+      );
       toast.error(error.response?.data?.error || "Failed to login. Try again!"); // Show error toast
     }
   };
@@ -37,7 +42,9 @@ const TeacherLoginForm = () => {
         <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-sm">
           <div className="text-center mb-6">
             <FaChalkboardTeacher className="mx-auto text-5xl text-green-600" />
-            <h2 className="text-3xl font-bold text-gray-800 mt-2">Teacher Login</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mt-2">
+              Teacher Login
+            </h2>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -9,9 +8,11 @@ const TeacherSignupForm = ({ formData, handleInputChange }) => {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/classes/display");
+        const response = await axios.get(
+          "https://school-erp-cyil.onrender.com/classes/display"
+        );
         let result = response.data.data;
-        console.log(result)
+        console.log(result);
         setClasses(result);
       } catch (error) {
         console.error("Error fetching classes:", error);
@@ -49,7 +50,9 @@ const TeacherSignupForm = ({ formData, handleInputChange }) => {
         </select>
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Date of Birth</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Date of Birth
+        </label>
         <input
           type="date"
           name="dob"
@@ -70,7 +73,9 @@ const TeacherSignupForm = ({ formData, handleInputChange }) => {
         />
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Contact Number</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Contact Number
+        </label>
         <input
           type="text"
           name="contact"
@@ -92,7 +97,9 @@ const TeacherSignupForm = ({ formData, handleInputChange }) => {
         />
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Assigned Class</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Assigned Class
+        </label>
         <select
           name="assignedClass"
           value={formData.assignedClass}
@@ -120,7 +127,9 @@ const TeacherSignupForm = ({ formData, handleInputChange }) => {
         />
       </div>
       <div>
-        <label className="block text-gray-700 font-medium mb-2">Confirm Password</label>
+        <label className="block text-gray-700 font-medium mb-2">
+          Confirm Password
+        </label>
         <input
           type="password"
           name="confirmPassword"
