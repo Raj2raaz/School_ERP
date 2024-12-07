@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.post('/add', addStudent);
 router.get('/display', getStudents);
-router.put('/update/:id', updateStudent);
-router.delete('/delete/:id', deleteStudent);
+router.put('/update/:_id', updateStudent);
+router.delete('/delete/:_id', deleteStudent);
 
 router.post('/signup', signupStudent); // Student signup
 router.post('/login', loginStudent);   // Student login

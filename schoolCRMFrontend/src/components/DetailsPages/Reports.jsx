@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../LandingPages/Sidebar"; // Adjust path based on your project structure
 import { FaChartLine, FaWallet } from "react-icons/fa";
+import ClassAnalytics from "./ClassAnalytics";
+import ExpenseAnalytics from "./ExpenseAnalytics";
 
 const Reports = () => {
+  const [activeAnalytics, setActiveAnalytics] = useState(null); // Track which analytics to show
+
+  const handleClose = () => {
+    setActiveAnalytics(null); // Reset activeAnalytics to hide the div
+  };
+
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       {/* Sidebar */}
@@ -15,7 +23,12 @@ const Reports = () => {
         {/* Flex Container for Cards */}
         <div className="flex space-x-8">
           {/* Class Analytics Card */}
-          <div className="bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-1/2">
+          <div
+            onClick={() => setActiveAnalytics("class")}
+            className={`bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-1/2 cursor-pointer ${
+              activeAnalytics === "class" && "ring-4 ring-indigo-400"
+            }`}
+          >
             <div className="flex items-center space-x-4">
               <FaChartLine className="text-blue-700 text-3xl" />
               <h2 className="text-xl font-semibold text-gray-700">Class Analytics</h2>
@@ -26,7 +39,12 @@ const Reports = () => {
           </div>
 
           {/* Expense Analytics Card */}
-          <div className="bg-gradient-to-r from-yellow-200 via-orange-200 to-red-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-1/2">
+          <div
+            onClick={() => setActiveAnalytics("expense")}
+            className={`bg-gradient-to-r from-yellow-200 via-orange-200 to-red-200 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 w-1/2 cursor-pointer ${
+              activeAnalytics === "expense" && "ring-4 ring-orange-400"
+            }`}
+          >
             <div className="flex items-center space-x-4">
               <FaWallet className="text-yellow-700 text-3xl" />
               <h2 className="text-xl font-semibold text-gray-700">Expense Analytics</h2>
@@ -36,6 +54,23 @@ const Reports = () => {
             </p>
           </div>
         </div>
+
+        {/* Conditional Div with Close Button */}
+        {activeAnalytics && (
+          <div className="relative bg-white p-6 rounded-lg shadow-lg border border-gray-200 hover:shadow-xl transition-shadow duration-300">
+            <button
+              onClick={handleClose}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-800 transition"
+              aria-label="Close"
+            >
+              ✕
+            </button>
+            <div className="mt-2 text-gray-600">
+              {activeAnalytics === "class" && <ClassAnalytics />}
+              {activeAnalytics === "expense" && <ExpenseAnalytics />}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

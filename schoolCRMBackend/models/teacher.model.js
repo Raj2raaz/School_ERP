@@ -11,7 +11,9 @@ const teacherSchema = new mongoose.Schema(
         match: [/^\d{10}$/, 'Contact number must be 10 digits.'] 
       },
       salary: { type: Number, required: true },
-      assignedClass: { type: mongoose.Schema.Types.ObjectId, ref: 'Class' }, // Reference to Class
+      assignedClass: { type: mongoose.Schema.Types.ObjectId, ref: 'Class', default: null }, // Reference to Class
+      email: { type: String, required: true, unique: true }, // Ensure email is unique
+      password: { type: String, required: true }, // Add password field
     },
     { timestamps: true }
   );

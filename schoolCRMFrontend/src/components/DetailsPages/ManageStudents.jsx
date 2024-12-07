@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import sampleData from "../../sampleData.json"; // Adjust the path accordingly
-import Sidebar from '../LandingPages/Sidebar';
-import { Link } from 'react-router-dom';
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Sidebar from "../LandingPages/Sidebar";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ManageStudents = () => {
-  const [students, setStudents] = useState(sampleData.students);
+  const [students, setStudents] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [editingStudent, setEditingStudent] = useState(null);
   const [newStudent, setNewStudent] = useState({
     name: "",
@@ -12,181 +15,199 @@ const ManageStudents = () => {
     dob: "",
     contact: "",
     feesPaid: false,
-    class: "",
+    classId: "",
     email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [currentPage, setCurrentPage] = useState(1);
   const studentsPerPage = 5;
-  const [showForm, setShowForm] = useState(false); // State to toggle form visibility
+  const [showForm, setShowForm] = useState(false);
 
-  // Handle form input changes
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const studentsResponse = await axios.get(`http://localhost:5000/students/display`);
+        setStudents(studentsResponse.data.data);
+
+        const classesResponse = await axios.get(`http://localhost:5000/classes/display`);
+        setClasses(classesResponse.data.data);
+      } catch (error) {
+        console.error("Error fetching data", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewStudent((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "feesPaid" ? value === "true" : value,
     }));
   };
 
-  // Handle form submit (Add/Edit)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editingStudent) {
-      // Update existing student
-      setStudents((prev) =>
-        prev.map((s) =>
-          s.id === editingStudent.id ? { ...s, ...newStudent } : s
-        )
-      );
-      setEditingStudent(null);
-    } else {
-      // Add new student
-      setStudents((prev) => [
-        ...prev,
-        { id: `student${students.length + 1}`, ...newStudent },
-      ]);
+
+    try {
+      if (newStudent.password !== newStudent.confirmPassword) {
+        toast.error("Passwords do not match!");
+        return;
+      }
+
+      if (!newStudent.name || !newStudent.email || !newStudent.password) {
+        toast.error("Please fill in all required fields.");
+        return;
+      }
+
+      if (editingStudent) {
+        const response = await axios.put(
+          `http://localhost:5000/students/update/${editingStudent._id}`,
+          newStudent
+        );
+
+        if (response.status === 200) {
+          setStudents((prev) =>
+            prev.map((s) => (s._id === editingStudent._id ? { ...s, ...newStudent } : s))
+          );
+          toast.success("Student updated successfully!");
+        } else {
+          console.error("Failed to update student:", response.data);
+        }
+      } else {
+        const response = await axios.post("http://localhost:5000/students/add", newStudent);
+
+        if (response.status === 201) {
+          setStudents((prev) => [...prev, response.data]);
+          toast.success("Student added successfully!");
+        } else {
+          console.error("Failed to add student:", response.data);
+        }
+      }
+
+      resetForm();
+    } catch (error) {
+      console.error("Error submitting form:", error.response?.data || error.message);
+      toast.error("Something went wrong. Please try again.");
     }
+  };
+
+  const handleEdit = (student) => {
+    setEditingStudent(student);
+    setNewStudent({
+      ...student,
+      password: "",
+      confirmPassword: "",
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/students/delete/${id}`);
+      setStudents((prev) => prev.filter((student) => student._id !== id));
+      toast.success("Student deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting student", error);
+      toast.error("Failed to delete student.");
+    }
+  };
+
+  const resetForm = () => {
     setNewStudent({
       name: "",
       gender: "",
       dob: "",
       contact: "",
       feesPaid: false,
-      class: "",
+      classId: "",
       email: "",
+      password: "",
+      confirmPassword: "",
     });
-    setShowForm(false); // Hide form after submit
+    setEditingStudent(null);
+    setShowForm(false);
   };
 
-  // Handle editing a student
-  const handleEdit = (student) => {
-    setEditingStudent(student);
-    setNewStudent(student);  // Pre-fill form with student data
-    setShowForm(true); // Show form when editing
-  };
-
-  // Handle deleting a student
-  const handleDelete = (id) => {
-    setStudents(students.filter((student) => student.id !== id));
-  };
-
-  // Pagination logic
   const indexOfLastStudent = currentPage * studentsPerPage;
   const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
   const currentStudents = students.slice(indexOfFirstStudent, indexOfLastStudent);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-200 to-gray-300">
       <Sidebar />
       <div className="flex-1 p-10 space-y-8">
+      <ToastContainer />
         <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Manage Students</h1>
 
-        {/* Add Student Button */}
         <button
           onClick={() => {
             setShowForm(true);
-            setEditingStudent(null); // Reset the form for adding a new student
+            setEditingStudent(null);
           }}
           className="mb-6 px-6 py-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-lg shadow-md hover:bg-gradient-to-r hover:from-indigo-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
           Add Student
         </button>
 
-        {/* Table for displaying student data */}
         <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg mb-8">
           <table className="min-w-full table-auto border-collapse">
             <thead className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white">
               <tr>
                 <th className="px-6 py-3 text-left font-semibold text-sm">#</th>
-                <th className="px-6 py-3 text-left font-semibold text-sm">Student Name</th>
+                <th className="px-6 py-3 text-left font-semibold text-sm">Name</th>
                 <th className="px-6 py-3 text-left font-semibold text-sm">Gender</th>
                 <th className="px-6 py-3 text-left font-semibold text-sm">DOB</th>
                 <th className="px-6 py-3 text-left font-semibold text-sm">Contact</th>
-                <th className="px-6 py-3 text-left font-semibold text-sm">Fees Paid</th>
+                <th className="px-6 py-3 text-left font-semibold text-sm">Email</th>
+                <th className="px-6 py-3 text-left font-semibold text-sm">Fees</th>
                 <th className="px-6 py-3 text-left font-semibold text-sm">Class</th>
                 <th className="px-6 py-3 text-left font-semibold text-sm">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {currentStudents.map((student, index) => {
-                return (
-                  <tr key={student.id} className="border-b hover:bg-gray-100 transition duration-300 ease-in-out">
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800">{index + 1 + (currentPage - 1) * studentsPerPage}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800">{student.name}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.gender}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.dob}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.contact}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-600">
-                      <span
-                        className={`px-2 py-1 text-xs rounded-full ${student.feesPaid ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}
-                      >
-                        {student.feesPaid ? "Paid" : "Pending"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.class}</td>
-                    <td className="px-6 py-4 text-sm font-medium">
-                      <button
-                        onClick={() => handleEdit(student)}
-                        className="text-indigo-600 hover:text-indigo-800 mr-3"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(student.id)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {currentStudents.map((student, index) => (
+                <tr key={student._id} className="border-b hover:bg-gray-100 transition duration-300 ease-in-out">
+                  <td className="px-6 py-4 text-sm font-medium text-gray-800">{index + 1 + (currentPage - 1) * studentsPerPage}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-800">{student.name}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.gender}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.dob}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.contact}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-600">{student.email}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-600">
+                    <span className={`px-2 py-1 text-xs rounded-full ${student.feesPaid ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                      {student.feesPaid ? "Paid" : "Pending"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm font-medium text-gray-600">
+                    {classes.find((cls) => cls._id === student.classId)?.className || "N/A"}
+                  </td>
+                  <td className="px-6 py-4 text-sm font-medium">
+                    <button onClick={() => handleEdit(student)} className="text-indigo-600 hover:text-indigo-800 mr-3">
+                      Edit
+                    </button>
+                    <button onClick={() => handleDelete(student._id)} className="text-red-600 hover:text-red-800">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <button
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-l-lg hover:bg-indigo-700 disabled:bg-gray-300 transition-all duration-300"
-            >
-              Prev
-            </button>
-            <button
-              onClick={() => paginate(currentPage + 1)}
-              disabled={currentPage === Math.ceil(students.length / studentsPerPage)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-r-lg hover:bg-indigo-700 disabled:bg-gray-300 transition-all duration-300"
-            >
-              Next
-            </button>
-          </div>
-          <div className="text-sm text-gray-600">
-            Page {currentPage} of {Math.ceil(students.length / studentsPerPage)}
-          </div>
-        </div>
-
-        {/* Modal Form (Add/Edit Student) */}
         {showForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-96 relative transform transition-all duration-500 ease-in-out scale-100 hover:scale-105">
-              {/* Close Button */}
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              >
+            <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-lg w-96 relative max-h-[90%] overflow-y-auto">
+              <button type="button" onClick={() => setShowForm(false)} className="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
                 <span className="text-2xl">×</span>
               </button>
 
-              <h2 className="text-2xl font-semibold text-gray-800 mb-6">
-                {editingStudent ? "Edit Student" : "Add New Student"}
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-6">{editingStudent ? "Edit Student" : "Add New Student"}</h2>
+
+              <div className="grid grid-cols-1 gap-6">
                 <div>
                   <label className="block text-lg font-medium text-gray-800">Name</label>
                   <input
@@ -194,71 +215,11 @@ const ManageStudents = () => {
                     name="name"
                     value={newStudent.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
                     required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
                   />
                 </div>
-                <div>
-                  <label className="block text-lg font-medium text-gray-800">Gender</label>
-                  <select
-                    name="gender"
-                    value={newStudent.gender}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
-                    required
-                  >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-lg font-medium text-gray-800">DOB</label>
-                  <input
-                    type="date"
-                    name="dob"
-                    value={newStudent.dob}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-lg font-medium text-gray-800">Contact</label>
-                  <input
-                    type="text"
-                    name="contact"
-                    value={newStudent.contact}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-lg font-medium text-gray-800">Fees Paid</label>
-                  <select
-                    name="feesPaid"
-                    value={newStudent.feesPaid}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
-                    required
-                  >
-                    <option value={true}>Paid</option>
-                    <option value={false}>Pending</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-lg font-medium text-gray-800">Class</label>
-                  <input
-                    type="text"
-                    name="class"
-                    value={newStudent.class}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
-                    required
-                  />
-                </div>
+
                 <div>
                   <label className="block text-lg font-medium text-gray-800">Email</label>
                   <input
@@ -266,22 +227,136 @@ const ManageStudents = () => {
                     name="email"
                     value={newStudent.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border rounded-md text-gray-800"
                     required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
                   />
                 </div>
-              </div>
-              <div className="mt-6">
+
+                <div>
+                  <label className="block text-lg font-medium text-gray-800">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    value={newStudent.password}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-lg font-medium text-gray-800">Confirm Password</label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    value={newStudent.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-lg font-medium text-gray-800">Gender</label>
+                  <select
+                    name="gender"
+                    value={newStudent.gender}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-lg font-medium text-gray-800">DOB</label>
+                  <input
+                    type="date"
+                    name="dob"
+                    value={newStudent.dob}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-lg font-medium text-gray-800">Class</label>
+                  <select
+                    name="classId"
+                    value={newStudent.classId}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
+                  >
+                    <option value="">Select Class</option>
+                    {classes.map((cls) => (
+                      <option key={cls._id} value={cls._id}>
+                        {cls.className}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-lg font-medium text-gray-800">Contact</label>
+                  <input
+                    type="text"
+                    name="contact"
+                    value={newStudent.contact}
+                    onChange={handleChange}
+                    required
+                    className="mt-2 w-full p-3 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="feesPaid"
+                    checked={newStudent.feesPaid}
+                    onChange={(e) =>
+                      setNewStudent((prev) => ({
+                        ...prev,
+                        feesPaid: e.target.checked,
+                      }))
+                    }
+                    className="mr-2"
+                  />
+                  <label className="text-lg font-medium text-gray-800">Fees Paid</label>
+                </div>
+
                 <button
                   type="submit"
-                  className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none"
+                  className="mt-6 w-full px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none"
                 >
-                  {editingStudent ? "Save Changes" : "Add Student"}
+                  {editingStudent ? "Update Student" : "Add Student"}
                 </button>
               </div>
             </form>
           </div>
         )}
+
+        {/* Pagination */}
+        <div className="flex justify-center mt-6">
+          {Array.from({ length: Math.ceil(students.length / studentsPerPage) }, (_, i) => (
+            <button
+              key={i + 1}
+              onClick={() => paginate(i + 1)}
+              className={`mx-1 px-4 py-2 rounded-md ${
+                currentPage === i + 1
+                  ? "bg-indigo-500 text-white"
+                  : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

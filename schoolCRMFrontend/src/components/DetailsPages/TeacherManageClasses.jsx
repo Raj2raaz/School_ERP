@@ -2,9 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import Sidebar from "../LandingPages/Sidebar";
+// import Sidebar from "../LandingPages/Sidebar";
+import TeacherSidebar from '../LandingPages/TeacherSidebar'
 
-const ManageClasses = () => {
+const TeacherManageClasses = () => {
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -128,7 +129,7 @@ const handleStudentCheckbox = (e, studentId) => {
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       {/* {console.log(classes)} */}
       {/* Sidebar */}
-      <Sidebar className="sticky top-0 h-screen" />
+      <TeacherSidebar className="sticky top-0 h-screen" />
 
       {/* Main Content */}
       <div className="flex-1 p-10 space-y-8 overflow-y-auto">
@@ -358,4 +359,4 @@ const handleStudentCheckbox = (e, studentId) => {
   );
 };
 
-export default ManageClasses;
+export default TeacherManageClasses;

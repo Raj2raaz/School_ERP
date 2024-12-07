@@ -31,11 +31,18 @@ const SignupPage = ({ userType }) => {
   const navigate = useNavigate();  
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    const { name, value, type, checked } = e.target;
+    if (type === "checkbox") {
+      setFormData({
+        ...formData,
+        [name]: checked,  // Correctly handle checkbox as Boolean
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const getIcon = () => {
@@ -83,14 +90,15 @@ const SignupPage = ({ userType }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+
     if (userType === "admin") {
       // Check if passwords match
       if (formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match!");
         return;
       }
-  
+    
       try {
         // Make an API call to the admin signup endpoint
         const response = await axios.post("http://localhost:5000/admin/add", {
@@ -99,12 +107,12 @@ const SignupPage = ({ userType }) => {
           password: formData.password,
           contact: formData.contact,
         });
-  
+    
         toast.success(response.data.message); // Success message from the API
         // navigate("/admin-dashboard");
         setTimeout(() => {
           navigate("/admin-dashboard");
-        }, 1000); 
+        }, 1000);
         setFormData({
           name: "",
           email: "",
@@ -115,9 +123,89 @@ const SignupPage = ({ userType }) => {
       } catch (error) {
         toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
       }
+    } else if (userType === "teacher") {
+      // Check if passwords match
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Passwords do not match!");
+        return;
+      }
+    
+      try {
+        // Make an API call to the teacher signup endpoint
+        const response = await axios.post("http://localhost:5000/teachers/add", {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          contact: formData.contact,
+          gender: formData.gender,
+          dob: formData.dob,
+          salary: formData.salary,
+          assignedClass: formData.assignedClass || null, // Add assigned class, default to null if not assigned
+        });
+    
+        toast.success(response.data.message); // Success message from the API
+        // navigate("/teacher-dashboard");
+        setTimeout(() => {
+          navigate("/teacher-dashboard");
+        }, 1000);
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          contact: "",
+          gender: "",
+          dob: "",
+          salary: "",
+          assignedClass: "",
+        });
+      } catch (error) {
+        toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
+      }
+    } else if (userType === "student") {
+      // Check if passwords match
+      if (formData.password !== formData.confirmPassword) {
+        toast.error("Passwords do not match!");
+        return;
+      }
+    
+      try {
+        // Make an API call to the student signup endpoint
+        const response = await axios.post("http://localhost:5000/students/signup", {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          contact: formData.contact,
+          gender: formData.gender,
+          dob: formData.dob,
+          feesPaid: formData.feesPaid,
+          class: formData.class, // Use the class field here
+        });
+    
+        toast.success(response.data.message); // Success message from the API
+        // navigate("/student-dashboard");
+        setTimeout(() => {
+          navigate("/student-dashboard");
+        }, 1000);
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          contact: "",
+          gender: "",
+          dob: "",
+          feesPaid: false,
+          class: "", // Default to empty, or you can add a null class value if required
+        });
+      } catch (error) {
+        console.log(error.response?.data?.error);
+        toast.error(error.response?.data?.error || "Failed to sign up. Please try again.");
+      }
     } else {
       toast.error("Signup functionality for this user type is not implemented yet.");
     }
+    
   };
   
 

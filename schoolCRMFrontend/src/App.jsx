@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import StudentComponet from "./components/StudentComponent";
-import TeacherComponent from "./components/TeacherComponent";
-import ClassComponent from "./components/ClassComponent";
-import LoginPage from "./components/Login/LoginPage.jsx";
+// import StudentComponet from "./components/StudentComponent";
+// import TeacherComponent from "./components/TeacherComponent";
+// import ClassComponent from "./components/ClassComponent";
+// import LoginPage from "./components/Login/LoginPage.jsx";
 import AdminLoginForm from "./components/Login/AdminLoginForm.jsx";
 import TeacherLoginForm from "./components/Login/TeacherLoginForm.jsx";
 import StudentLoginForm from "./components/Login/StudentLoginForm.jsx";
@@ -19,6 +19,7 @@ import Reports from "./components/DetailsPages/Reports.jsx";
 import ManageClasses from "./components/DetailsPages/ManageClasses.jsx";
 import ManageStudents from "./components/DetailsPages/ManageStudents.jsx";
 import ManageTeachers from "./components/DetailsPages/ManageTeachers";
+import TeacherManageClasses from "./components/DetailsPages/TeacherManageClasses.jsx";
 
 function App() {
 
@@ -49,7 +50,7 @@ function App() {
             path="/signup/student"
             element={<SignupPage userType="student" />}
           />
-          <Route path="/student-landing" element={<StudentLandingPage />} />
+          <Route path="/student-dashboard" element={<StudentLandingPage />} />
 
           <Route path="/view-class-details" element={<ViewClassDetails />} />
           <Route path="/view-marks" element={<ViewMarks />} />
@@ -61,8 +62,9 @@ function App() {
 
           <Route path="/admin/classes" element={<ManageClasses />} />
           <Route path="/admin/students" element={<ManageStudents />} />
-
           <Route path="/admin/teachers" element={<ManageTeachers />} />
+
+          <Route path="/teacher/classes" element={<TeacherManageClasses/>}/>
 
           {/* <Route path="/manage-classes" element={<ManageClasses />} />
         <Route path="/student-performance" element={<StudentPerformance />} />

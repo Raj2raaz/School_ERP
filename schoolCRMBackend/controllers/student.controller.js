@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose';
 
 import { studentModel } from "../models/student.model.js";
+import { classModel } from '../models/class.model.js';
 
 // Signup(create a new student)
 export const signupStudent = async (req, res) => {
@@ -38,8 +40,10 @@ export const signupStudent = async (req, res) => {
 // Add a new student
 export const addStudent = async (req, res) => {
   try {
-    const { name, gender, dob, contact, feesPaid, class: classId } = req.body;
+    const { name, gender, dob, contact, feesPaid, class: classId, email, password } = req.body;
     // const newStudent = new studentModel(req.body);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newStudent = new studentModel({
         name,
         gender,
@@ -47,6 +51,8 @@ export const addStudent = async (req, res) => {
         contact,
         feesPaid,
         class: classId || null, // Default to null
+        email,
+        password: hashedPassword,
       });
     await newStudent.save();
     res
@@ -105,38 +111,88 @@ export const getStudents = async (req, res) => {
   }
 };
 
-// Update a student
+// update
+
 export const updateStudent = async (req, res) => {
   try {
+    const { _id } = req.params;
+
+    // Validate the ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "Invalid Student ID format" });
+    }
+
+    // Extract fields from the request body
+    const { password, classId, ...otherFields } = req.body;
+
+    // Hash password if it's provided
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      otherFields.password = hashedPassword;  // Use the hashed password
+    }
+
+    // If classId is being updated, handle the class assignment logic
+    if (classId) {
+      // First, remove the student from the old class (if any)
+      const student = await studentModel.findById(_id);
+      if (student.classId) {
+        await classModel.findByIdAndUpdate(student.classId, {
+          $pull: { students: _id }  // Remove the student from the old class
+        });
+      }
+
+      // Now, add the student to the new class
+      await classModel.findByIdAndUpdate(classId, {
+        $addToSet: { students: _id }  // Add the student to the new class
+      });
+    }
+
+    // Update the student document
     const updatedStudent = await studentModel.findByIdAndUpdate(
-      req.params.id,
-      req.body,
+      _id,
+      { ...otherFields, classId }, // Update student with other fields and new classId
       { new: true } // Return the updated student object
     );
 
     if (!updatedStudent) {
-      return res.status(404).json({ error: "Student not found" });
+      return res.status(404).json({ error: "Student not found or not updated" });
     }
 
-    res
-      .status(200)
-      .json({ message: "Student updated successfully!", data: updatedStudent });
+    res.status(200).json({
+      message: "Student updated successfully!",
+      data: updatedStudent,
+    });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error(err);  // Log the error for debugging
+    res.status(500).json({ error: err.message });  // Return the full error message to the client
   }
 };
+
 
 // Delete a student
 export const deleteStudent = async (req, res) => {
   try {
-    const deletedStudent = await studentModel.findByIdAndDelete(req.params.id);
+    const { _id } = req.params;
+    console.log("Deleting student with ID:", _id);
 
-    if (!deletedStudent) {
-      return res.status(404).json({ error: "Student not found" });
+    // Validate the ObjectId
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({ error: "Invalid Student ID format" });
     }
 
-    res.status(200).json({ message: "Student deleted successfully!" });
+    const deletedStudent = await studentModel.findByIdAndDelete(_id);
+
+    if (!deletedStudent) {
+      return res.status(404).json({ error: "Student not found or not deleted" });
+    }
+
+    res.status(200).json({
+      message: "Student deleted successfully!",
+      data: deletedStudent, // Optional: You can send back the deleted student data
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err); // Log the error in the server console
+    res.status(500).json({ error: err.message }); // Send the full error message to the client
   }
 };
+

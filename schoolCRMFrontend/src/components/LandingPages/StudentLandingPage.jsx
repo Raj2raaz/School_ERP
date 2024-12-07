@@ -1,46 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { FaChalkboardTeacher, FaUserGraduate, FaUserCircle, FaBook, FaMedal, FaInfoCircle } from "react-icons/fa";
+import StudentSidebar from "./StudentSidebar"; // Import the StudentSidebar component
+import { FaBook, FaMedal, FaInfoCircle } from "react-icons/fa";
 
 const StudentLandingPage = () => {
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       {/* Side Navbar */}
-      <div className="w-64 bg-gradient-to-b from-indigo-500 via-blue-400 to-green-300 text-white shadow-lg">
-        <div className="p-6 text-center">
-          <div className="text-2xl font-bold">Student Dashboard</div>
-          <hr className="mt-2 border-gray-300" />
-        </div>
-        <ul className="space-y-6 mt-10">
-          <li>
-            <Link
-              to="/view-class-details"
-              className="flex items-center px-6 py-3 text-lg font-medium hover:bg-blue-700 rounded-lg transition-all duration-300"
-            >
-              <FaChalkboardTeacher className="mr-3 text-white" />
-              View Class Details
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/view-marks"
-              className="flex items-center px-6 py-3 text-lg font-medium hover:bg-blue-700 rounded-lg transition-all duration-300"
-            >
-              <FaUserGraduate className="mr-3 text-white" />
-              View Marks
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/profile"
-              className="flex items-center px-6 py-3 text-lg font-medium hover:bg-blue-700 rounded-lg transition-all duration-300"
-            >
-              <FaUserCircle className="mr-3 text-white" />
-              Profile
-            </Link>
-          </li>
-        </ul>
-      </div>
+      <StudentSidebar /> {/* Use the StudentSidebar component */}
 
       {/* Main Content */}
       <div className="flex-1 p-10 space-y-8 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
