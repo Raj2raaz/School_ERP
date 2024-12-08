@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { FaUserAlt } from "react-icons/fa";
+import { FaUserGraduate } from "react-icons/fa";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import LandingHeader from "../LandingPages/LandingHeader";
 import LandingFooter from "../LandingPages/LandingFooter";
-import { toast, ToastContainer } from "react-toastify"; // Import toast
-import "react-toastify/dist/ReactToastify.css"; // Import the styles for toast
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const StudentLoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,83 +17,66 @@ const StudentLoginForm = () => {
     try {
       const response = await axios.post(
         "https://school-erp-cyil.onrender.com/students/login",
-        {
-          email,
-          password,
-        }
+        { email, password }
       );
-      toast.success(response.data.message); // Show success toast
+      toast.success(response.data.message);
       setTimeout(() => {
-        navigate("/student-dashboard"); // Replace with actual student dashboard route
+        navigate("/student-dashboard");
       }, 2000);
     } catch (error) {
-      setErrorMessage(
-        error.response?.data?.error || "Failed to login. Try again!"
-      );
-      toast.error(error.response?.data?.error || "Failed to login. Try again!"); // Show error toast
+      toast.error(error.response?.data?.error || "Failed to login. Try again!");
     }
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-gray-100">
       <LandingHeader />
-      <div className="flex-grow flex items-center justify-center bg-gradient-to-b from-blue-50 to-gray-100">
-        <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-sm">
+      <div className="flex-grow flex items-center justify-center px-4 py-6">
+        <div className="bg-white shadow-xl rounded-lg p-6 w-full max-w-md">
           <div className="text-center mb-6">
-            <FaUserAlt className="mx-auto text-5xl text-blue-600" />
-            <h2 className="text-3xl font-bold text-gray-800 mt-2">
+            <FaUserGraduate className="mx-auto text-5xl text-blue-600" />
+            <h2 className="text-2xl font-bold text-gray-800 mt-2">
               Student Login
             </h2>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
               <input
                 type="email"
-                name="email"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
               <input
                 type="password"
-                name="password"
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-            {errorMessage && (
-              <p className="text-red-500 text-sm text-center">{errorMessage}</p>
-            )}
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
             >
               Login
             </button>
           </form>
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeButton={true}
-          />
+          <ToastContainer autoClose={2000} position="top-right" />
           <p className="text-center text-sm text-gray-500 mt-4">
             Don’t have an account?{" "}
             <Link
               to="/signup/student"
-              className="text-blue-500 hover:underline font-medium"
+              className="text-blue-500 hover:underline"
             >
               Sign up
             </Link>

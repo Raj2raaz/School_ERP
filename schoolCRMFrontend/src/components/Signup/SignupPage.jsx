@@ -111,7 +111,6 @@ const SignupPage = ({ userType }) => {
         );
 
         toast.success(response.data.message); // Success message from the API
-        // navigate("/admin-dashboard");
         setTimeout(() => {
           navigate("/admin-dashboard");
         }, 1000);
@@ -151,7 +150,6 @@ const SignupPage = ({ userType }) => {
         );
 
         toast.success(response.data.message); // Success message from the API
-        // navigate("/teacher-dashboard");
         setTimeout(() => {
           navigate("/teacher-dashboard");
         }, 1000);
@@ -195,7 +193,6 @@ const SignupPage = ({ userType }) => {
         );
 
         toast.success(response.data.message); // Success message from the API
-        // navigate("/student-dashboard");
         setTimeout(() => {
           navigate("/student-dashboard");
         }, 1000);
@@ -226,13 +223,13 @@ const SignupPage = ({ userType }) => {
   return (
     <>
       <LandingHeader />
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 pt-12">
-        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+      <div className="min-h-screen flex flex-col items-center bg-gray-100 pt-24 pb-16 px-4 md:px-6">
+        <div className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
           <div className="text-center mb-6">
-            <h2 className="text-3xl font-bold text-gray-800">
+            <div className="mb-2">{getIcon()}</div>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
               Sign Up as {userType.charAt(0).toUpperCase() + userType.slice(1)}
             </h2>
-            {getIcon()}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

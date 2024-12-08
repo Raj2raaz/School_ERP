@@ -61,7 +61,7 @@ const Sidebar = () => {
         </li>
         <li>
           <Link
-            to="/admin-dashboard"
+            to=""
             className="flex items-center px-6 py-3 text-lg font-medium hover:bg-purple-700 rounded-lg transition-all duration-300"
           >
             <FaTasks className="mr-3 text-white" />
@@ -79,7 +79,7 @@ const Sidebar = () => {
         </li>
         <li>
           <Link
-            to="/admin-dashboard"
+            to=""
             className="flex items-center px-6 py-3 text-lg font-medium hover:bg-purple-700 rounded-lg transition-all duration-300"
           >
             <FaCog className="mr-3 text-white" />
