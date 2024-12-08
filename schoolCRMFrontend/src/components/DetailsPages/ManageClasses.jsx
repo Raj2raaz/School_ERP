@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../LandingPages/Sidebar";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Don't forget to import the CSS
 
 const ManageClasses = () => {
   const [classes, setClasses] = useState([]);
@@ -64,9 +66,10 @@ const ManageClasses = () => {
       );
       setClasses([...classes, res.data.data]);
       setIsModalOpen(false);
-      alert("Class added successfully!");
+      toast.success("Class added successfully!"); // Display success toast
     } catch (error) {
       console.error("Error adding class:", error);
+      toast.error("Error adding class!"); // Display error toast
     }
   };
 
@@ -83,9 +86,10 @@ const ManageClasses = () => {
         )
       );
       setIsModalOpen(false);
-      alert("Class updated successfully!");
+      toast.success("Class updated successfully!"); // Display success toast
     } catch (error) {
       console.error("Error updating class:", error);
+      toast.error("Error updating class!"); // Display error toast
     }
   };
 
@@ -96,9 +100,10 @@ const ManageClasses = () => {
         `https://school-erp-cyil.onrender.com/classes/delete/${classId}`
       );
       setClasses(classes.filter((classItem) => classItem._id !== classId));
-      alert("Class deleted successfully!");
+      toast.success("Class deleted successfully!"); // Display success toast
     } catch (error) {
       console.error("Error deleting class:", error);
+      toast.error("Error deleting class!"); // Display error toast
     }
   };
 
@@ -112,6 +117,7 @@ const ManageClasses = () => {
       studentFees: "",
     });
     setIsModalOpen(true);
+    setCurrentClass(null); // Reset currentClass when opening the Add Class modal
   };
 
   // Open the Edit Class Modal
@@ -144,7 +150,6 @@ const ManageClasses = () => {
 
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
-      {/* {console.log(classes)} */}
       {/* Sidebar */}
       <Sidebar className="sticky top-0 h-screen" />
 
@@ -165,10 +170,6 @@ const ManageClasses = () => {
         {/* Flex Container for Class Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {classes.map((classDetails) => {
-            // Find the teacher for the current class
-            // const teacher = teachers.find((t) => t._id === classDetails.teacher);
-            // console.log(teacher);
-
             // Find the students for the current class
             const classStudents = students.filter((s) =>
               classDetails.students.some((student) => student._id === s._id)
@@ -280,25 +281,6 @@ const ManageClasses = () => {
                 </select>
               </div>
 
-              {/* <div className="space-y-2">
-                <label htmlFor="students" className="block font-semibold">
-                  Students
-                </label>
-                <select
-                  id="students"
-                  name="students"
-                  value={formData.students}
-                  onChange={handleStudentSelect}
-                  multiple
-                  className="w-full p-2 border rounded-md"
-                >
-                  {students.map((student) => (
-                    <option key={student._id} value={student._id}>
-                      {student.name}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
               <div className="space-y-2">
                 <label htmlFor="students" className="block font-semibold">
                   Students
@@ -327,11 +309,10 @@ const ManageClasses = () => {
                             onChange={(e) =>
                               handleStudentCheckbox(e, student._id)
                             }
-                            className="mr-2"
                           />
                           <label
                             htmlFor={`student-${student._id}`}
-                            className="cursor-pointer"
+                            className="ml-2"
                           >
                             {student.name}
                           </label>
@@ -356,25 +337,29 @@ const ManageClasses = () => {
                   required
                 />
               </div>
-              <div className="flex justify-between mt-4">
+
+              <div className="flex space-x-4 mt-4">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600"
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600"
+                  className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
                 >
-                  {currentClass ? "Update Class" : "Add Class"}
+                  {currentClass ? "Save Changes" : "Add Class"}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
+      {/* Toast Notification Container */}
+      <ToastContainer />
     </div>
   );
 };
