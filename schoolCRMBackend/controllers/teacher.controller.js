@@ -9,6 +9,12 @@ export const addTeacher = async (req, res) => {
   try {
     const { name, gender, dob, contact, salary, assignedClass, email, password } = req.body;
 
+    // Check if a teacher with the provided email already exists
+    const existingTeacher = await teacherModel.findOne({ email });
+    if (existingTeacher) {
+      return res.status(400).json({ message: "Teacher with this email already exists!" });
+    }
+
     // Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 

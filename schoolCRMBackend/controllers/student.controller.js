@@ -42,6 +42,13 @@ export const addStudent = async (req, res) => {
   try {
     const { name, gender, dob, contact, feesPaid, class: classId, email, password } = req.body;
     // const newStudent = new studentModel(req.body);
+
+    // Check if a student with the provided email already exists
+    const existingStudent = await studentModel.findOne({ email });
+    if (existingStudent) {
+      return res.status(400).json({ message: "Student with this email already exists!" });
+    }
+    
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newStudent = new studentModel({

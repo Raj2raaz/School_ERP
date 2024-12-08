@@ -12,7 +12,14 @@ export const addAdmin = async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
 
-    const hashedPassword = await bcrypt.hash(password,10);
+    // Check if an admin with the provided email already exists
+    const existingAdmin = await adminModel.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({ message: "Admin with this email already exists!" });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a new admin object
     const newAdmin = new adminModel({
