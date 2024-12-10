@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaChalkboardTeacher, FaUserGraduate, FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaChalkboardTeacher,
+  FaUserGraduate,
+  FaUserCircle,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import { toast } from "react-toastify"; // Importing toast
 import { ToastContainer } from "react-toastify";
 
@@ -11,8 +18,8 @@ const StudentSidebar = () => {
 
   const handleLogout = () => {
     // Clear any user data (localStorage, sessionStorage, etc.)
-    localStorage.removeItem("userToken"); // Example: Clear token from localStorage (if using)
-    sessionStorage.removeItem("userToken"); // Example: Clear token from sessionStorage (if using)
+    localStorage.removeItem("authToken"); // Example: Clear token from localStorage
+    // sessionStorage.removeItem("userToken"); // Example: Clear token from sessionStorage
 
     // Show success toast
     toast.success("Logged out successfully!");
@@ -71,14 +78,16 @@ const StudentSidebar = () => {
           </button>
         )}
 
-        <Link to='/student-dashboard'>
-          <div className="p-6 text-center text-3xl font-semibold">Student Dashboard</div>
+        <Link to="/student-dashboard">
+          <div className="p-6 text-center text-3xl font-semibold">
+            Student Dashboard
+          </div>
         </Link>
         <hr className="border-gray-300 my-4" />
         <ul className="space-y-6 mt-6 flex-grow list-none">
           <li>
             <Link
-              to="/view-class-details"
+              to=""
               className="flex items-center px-6 py-3 text-lg font-medium hover:bg-blue-700 rounded-lg transition-all duration-300"
             >
               <FaChalkboardTeacher className="mr-3 text-white" />
@@ -87,7 +96,7 @@ const StudentSidebar = () => {
           </li>
           <li>
             <Link
-              to="/view-marks"
+              to=""
               className="flex items-center px-6 py-3 text-lg font-medium hover:bg-blue-700 rounded-lg transition-all duration-300"
             >
               <FaUserGraduate className="mr-3 text-white" />
@@ -96,7 +105,7 @@ const StudentSidebar = () => {
           </li>
           <li>
             <Link
-              to="/profile"
+              to=""
               className="flex items-center px-6 py-3 text-lg font-medium hover:bg-blue-700 rounded-lg transition-all duration-300"
             >
               <FaUserCircle className="mr-3 text-white" />
@@ -110,7 +119,7 @@ const StudentSidebar = () => {
           <hr className="border-gray-300 mb-4" />
           <button
             onClick={handleLogout}
-            style={{ fontSize: '22px', fontWeight: 'bold' }} // Larger and bolder font
+            style={{ fontSize: "22px", fontWeight: "bold" }} // Larger and bolder font
             className="flex items-center px-6 py-3 text-lg font-semibold hover:bg-blue-700 rounded-lg transition-all duration-300 w-full text-left"
           >
             <FaSignOutAlt className="mr-3 text-white" />

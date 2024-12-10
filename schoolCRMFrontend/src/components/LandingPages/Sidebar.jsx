@@ -20,8 +20,8 @@ const Sidebar = () => {
   const [timeoutId, setTimeoutId] = useState(null); // Timeout ID for auto-close
 
   const handleLogout = () => {
-    localStorage.removeItem("userToken");
-    sessionStorage.removeItem("userToken");
+    localStorage.removeItem("authToken");
+    // sessionStorage.removeItem("authToken");
     toast.success("Logged out successfully!");
     setTimeout(() => {
       navigate("/");

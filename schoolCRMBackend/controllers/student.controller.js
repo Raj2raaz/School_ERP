@@ -31,7 +31,26 @@ export const signupStudent = async (req, res) => {
     });
 
     await newStudent.save();
-    res.status(201).json({ message: "Student registered successfully!", data: newStudent });
+    // res.status(201).json({ message: "Student registered successfully!", data: newStudent });
+     // Send token and student details as part of the response
+     const token = jwt.sign(
+      { id: newStudent._id, email: newStudent.email },
+      process.env.JWT_SECRET || 'your_secret_key',
+      { expiresIn: '1h' }
+    );
+     res.status(201).json({
+      message: "Student registered successfully!",
+      token,
+      student: {
+        id: newStudent._id,
+        name: newStudent.name,
+        email: newStudent.email,
+        contact: newStudent.contact,
+        class: newStudent.class,
+        feesPaid: newStudent.feesPaid,
+        gender: newStudent.gender,
+      },
+    });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -92,7 +111,15 @@ export const loginStudent = async (req, res) => {
 
     res.status(200).json({
       message: "Login successful!",
-      token, // Send token back to the client
+      token,
+      student: {
+        id: student._id,
+        name: student.name,
+        email: student.email,
+        contact: student.contact,
+        class: student.class,
+        feesPaid: student.feesPaid,
+      },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

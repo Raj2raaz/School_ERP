@@ -1,4 +1,7 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")[1]; // Extract token from Authorization header
@@ -9,7 +12,7 @@ export const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_secret_key');
-    req.admin = decoded; // Add the decoded payload to the request object
+    req.user = decoded; // Add the decoded payload to the request object
     next();
   } catch (err) {
     res.status(401).json({ error: "Invalid token" });

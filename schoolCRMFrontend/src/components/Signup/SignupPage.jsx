@@ -101,7 +101,7 @@ const SignupPage = ({ userType }) => {
       try {
         // Make an API call to the admin signup endpoint
         const response = await axios.post(
-          "https://school-erp-cyil.onrender.com/admin/add",
+          "https://school-erp-cyil.onrender.com/admin/signup", // Change endpoint to /signup
           {
             name: formData.name,
             email: formData.email,
@@ -110,10 +110,16 @@ const SignupPage = ({ userType }) => {
           }
         );
 
+        const userData = response.data; // Extract the entire response data
+        console.log(userData);
+        localStorage.setItem("authToken", JSON.stringify(userData)); // Save token and user data
         toast.success(response.data.message); // Success message from the API
+
         setTimeout(() => {
-          navigate("/admin-dashboard");
+          navigate("/admin-dashboard"); // Redirect to admin dashboard
         }, 1000);
+
+        // Reset the form
         setFormData({
           name: "",
           email: "",
@@ -136,7 +142,7 @@ const SignupPage = ({ userType }) => {
       try {
         // Make an API call to the teacher signup endpoint
         const response = await axios.post(
-          "https://school-erp-cyil.onrender.com/teachers/add",
+          "https://school-erp-cyil.onrender.com/teachers/signup", // Adjust endpoint to /signup
           {
             name: formData.name,
             email: formData.email,
@@ -149,10 +155,16 @@ const SignupPage = ({ userType }) => {
           }
         );
 
+        const userData = response.data; // Extract the entire response data
+        console.log(userData);
+        localStorage.setItem("authToken", JSON.stringify(userData)); // Save token and user data
         toast.success(response.data.message); // Success message from the API
+
         setTimeout(() => {
-          navigate("/teacher-dashboard");
+          navigate("/teacher-dashboard"); // Redirect to teacher dashboard
         }, 1000);
+
+        // Reset the form
         setFormData({
           name: "",
           email: "",
@@ -191,7 +203,10 @@ const SignupPage = ({ userType }) => {
             class: formData.class, // Use the class field here
           }
         );
+        const userData = response.data; // Extract the entire response data
+        console.log(userData);
 
+        localStorage.setItem("authToken", JSON.stringify(userData)); // Save token and user data in localStorage
         toast.success(response.data.message); // Success message from the API
         setTimeout(() => {
           navigate("/student-dashboard");

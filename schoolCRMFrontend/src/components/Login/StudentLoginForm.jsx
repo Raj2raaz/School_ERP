@@ -16,10 +16,19 @@ const StudentLoginForm = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "https://school-erp-cyil.onrender.com/students/login",
+        "https://school-erp-cyil.onrender.com/students/login", // Ensure the correct endpoint for student login
         { email, password }
       );
+
+      // Save the token and user data in localStorage
+      const userData = response.data;
+      console.log(userData);
+      localStorage.setItem("authToken", JSON.stringify(userData)); // Save token
+
+      // Show success message
       toast.success(response.data.message);
+
+      // Redirect to the student dashboard after a short delay
       setTimeout(() => {
         navigate("/student-dashboard");
       }, 2000);

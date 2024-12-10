@@ -1,8 +1,44 @@
-import React from "react";
+import React ,{useState, useEffect}from "react";
+import { useNavigate } from "react-router-dom";
 import StudentSidebar from "./StudentSidebar"; // Import the StudentSidebar component
 import { FaBook, FaMedal, FaInfoCircle } from "react-icons/fa";
 
 const StudentLandingPage = () => {
+  const [data, setData] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("authToken"));
+    
+    if (storedData && storedData.token) {
+      const { token, student } = storedData;
+
+      try {
+        // Decode the token if necessary
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+
+        const tokenData = JSON.parse(jsonPayload);
+
+        // Combine token data with student data
+        const combinedData = { ...student, ...tokenData };
+
+        setData(combinedData); // Store the combined data in state
+      } catch (error) {
+        console.error("Failed to decode token:", error.message);
+      }
+    } else {
+      console.error("No token found! Redirecting to login.");
+      navigate("/login/student"); // Redirect to student login
+    }
+  }, []);
+
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
       {/* Side Navbar */}
@@ -10,7 +46,7 @@ const StudentLandingPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 p-10 space-y-8 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
-        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Welcome to Your Dashboard</h1>
+        <h1 className="text-4xl font-extrabold text-gray-800 mb-6">Welcome to {data?.name}'s Dashboard</h1>
 
         {/* Class Details Card */}
         <div className="bg-gradient-to-r from-indigo-200 via-indigo-300 to-purple-300 p-8 rounded-lg shadow-2xl hover:shadow-2xl transition-shadow duration-300">
@@ -45,8 +81,8 @@ const StudentLandingPage = () => {
             <h2 className="text-2xl font-semibold text-gray-700">Profile</h2>
           </div>
           <div className="mt-4 text-lg text-gray-600">
-            <p><strong>Name:</strong> John Doe</p>
-            <p><strong>Email:</strong> john.doe@example.com</p>
+            <p><strong>Name:</strong> {data?.name}</p>
+            <p><strong>Email:</strong> {data?.email}</p>
             <p><strong>Grade:</strong> 10th</p>
           </div>
         </div>

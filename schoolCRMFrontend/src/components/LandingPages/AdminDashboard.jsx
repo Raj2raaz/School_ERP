@@ -33,7 +33,7 @@ const AdminDashboard = () => {
         // Combine token data with admin data
         const combinedData = { ...admin, ...tokenData };
 
-        console.log(combinedData); // Logs both token and admin data
+        // console.log(combinedData); // Logs both token and admin data
         setData(combinedData); // Store the combined data in state
       } catch (error) {
         console.error("Failed to decode token:", error.message);
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
       {/* {console.log(data)} */}
       <ToastContainer
             position="top-right"
-            autoClose={2000}
+            autoClose={200}
             hideProgressBar={false}
             newestOnTop={false}
             closeButton={true}
@@ -59,7 +59,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 p-10 space-y-8 bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
         <h1 className="text-4xl font-extrabold text-gray-800 mb-6">
-          Welcome, Admin!
+          Welcome, {data?.name}!
         </h1>
 
         {/* Manage Classes Card */}

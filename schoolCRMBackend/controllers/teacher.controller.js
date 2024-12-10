@@ -187,7 +187,28 @@ export const signupTeacher = async (req, res) => {
     });
 
     await newTeacher.save();
-    res.status(201).json({ message: "Teacher registered successfully!", data: newTeacher });
+    // res.status(201).json({ message: "Teacher registered successfully!", data: newTeacher });
+    // Generate JWT token for the new teacher
+    const token = jwt.sign(
+      { id: newTeacher._id, email: newTeacher.email },
+      process.env.JWT_SECRET || "your_secret_key",
+      { expiresIn: "1h" }
+    );
+
+    // Send the token and teacher details as part of the response
+    res.status(201).json({
+      message: "Teacher signup successful!",
+      token,
+      teacher: {
+        id: newTeacher._id,
+        name: newTeacher.name,
+        email: newTeacher.email,
+        contact: newTeacher.contact,
+        assignedClass: newTeacher.assignedClass,
+        salary: newTeacher.salary,
+      },
+    });
+
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -210,12 +231,24 @@ export const loginTeacher = async (req, res) => {
       return res.status(400).json({ message: "Invalid password!" });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ id: teacher._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(
+      { id: teacher._id, email: teacher.email },
+      process.env.JWT_SECRET || "your_secret_key",
+      { expiresIn: "1h" }
+    );
 
+    // Send token and teacher details as part of the response
     res.status(200).json({
       message: "Login successful!",
-      token, // Send token back to the client
+      token,
+      teacher: {
+        id: teacher._id,
+        name: teacher.name,
+        email: teacher.email,
+        contact: teacher.contact,
+        assignedClass: teacher.assignedClass,
+        salary: teacher.salary,
+      },
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

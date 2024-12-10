@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-// import Sidebar from "../LandingPages/Sidebar";
 import TeacherSidebar from "../LandingPages/TeacherSidebar";
 
 const TeacherManageClasses = () => {
@@ -280,26 +279,6 @@ const TeacherManageClasses = () => {
                   ))}
                 </select>
               </div>
-
-              {/* <div className="space-y-2">
-                <label htmlFor="students" className="block font-semibold">
-                  Students
-                </label>
-                <select
-                  id="students"
-                  name="students"
-                  value={formData.students}
-                  onChange={handleStudentSelect}
-                  multiple
-                  className="w-full p-2 border rounded-md"
-                >
-                  {students.map((student) => (
-                    <option key={student._id} value={student._id}>
-                      {student.name}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
               <div className="space-y-2">
                 <label htmlFor="students" className="block font-semibold">
                   Students

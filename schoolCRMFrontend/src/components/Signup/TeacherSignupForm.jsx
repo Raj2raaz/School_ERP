@@ -12,7 +12,7 @@ const TeacherSignupForm = ({ formData, handleInputChange }) => {
           "https://school-erp-cyil.onrender.com/classes/display"
         );
         let result = response.data.data;
-        console.log(result);
+        // console.log(result);
         setClasses(result);
       } catch (error) {
         console.error("Error fetching classes:", error);

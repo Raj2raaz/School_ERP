@@ -19,6 +19,8 @@ const TeacherLoginForm = () => {
         "https://school-erp-cyil.onrender.com/teachers/login",
         { email, password }
       );
+      const userData = response.data; // Extract response data
+      localStorage.setItem("authToken", JSON.stringify(userData)); // Save token and teacher details
       toast.success(response.data.message);
       setTimeout(() => {
         navigate("/teacher-dashboard");

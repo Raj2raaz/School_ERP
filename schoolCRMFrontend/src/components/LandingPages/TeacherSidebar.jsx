@@ -11,8 +11,8 @@ const TeacherSidebar = () => {
 
   const handleLogout = () => {
     // Clear any user data (localStorage, sessionStorage, etc.)
-    localStorage.removeItem("userToken"); // Example: Clear token from localStorage (if using)
-    sessionStorage.removeItem("userToken"); // Example: Clear token from sessionStorage (if using)
+    localStorage.removeItem("authToken"); // Example: Clear token from localStorage 
+    // sessionStorage.removeItem("userToken"); // Example: Clear token from sessionStorage 
 
     // Show success toast
     toast.success("Logged out successfully!");
