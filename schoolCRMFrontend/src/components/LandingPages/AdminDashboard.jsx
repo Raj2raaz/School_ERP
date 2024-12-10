@@ -1,13 +1,53 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import Sidebar from "./Sidebar";
 import { FaUserShield, FaUsers, FaChartBar } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'; // Import styles for react-toastify
+// import jwt_decode from 'jwt-decode';
+import { useNavigate } from "react-router-dom";
+
 
 const AdminDashboard = () => {
+  const [data, setData] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("authToken"));
+    if (storedData && storedData.token) {
+      const { token, admin } = storedData;
+
+      try {
+        // Decode the token if necessary
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+            .join("")
+        );
+
+        const tokenData = JSON.parse(jsonPayload);
+
+        // Combine token data with admin data
+        const combinedData = { ...admin, ...tokenData };
+
+        console.log(combinedData); // Logs both token and admin data
+        setData(combinedData); // Store the combined data in state
+      } catch (error) {
+        console.error("Failed to decode token:", error.message);
+      }
+    } else {
+      console.error("No token found! Redirecting to login.");
+      navigate("/login/admin"); // Redirect to login
+    }
+  }, []);
+
+
   return (
     <div className="flex min-h-screen bg-gradient-to-r from-gray-50 via-gray-100 to-gray-200">
+      {/* {console.log(data)} */}
       <ToastContainer
             position="top-right"
             autoClose={2000}

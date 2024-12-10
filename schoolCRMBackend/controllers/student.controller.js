@@ -118,6 +118,33 @@ export const getStudents = async (req, res) => {
   }
 };
 
+// get Student by email
+export const getStudentByEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+
+    // Validate email
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Find student by email
+    const student = await studentModel.findOne({ email });
+
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+
+    res.status(200).json({
+      message: "Student retrieved successfully!",
+      data: student,
+    });
+  } catch (err) {
+    console.error(err); // Log the error for debugging
+    res.status(500).json({ error: err.message }); // Return the full error message to the client
+  }
+};
+
 // update
 
 export const updateStudent = async (req, res) => {

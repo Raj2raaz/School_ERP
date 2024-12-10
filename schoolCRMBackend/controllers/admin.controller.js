@@ -8,6 +8,35 @@ import jwt from 'jsonwebtoken';
 
 dotenv.config();
 // Add a new admin
+// export const addAdmin = async (req, res) => {
+//   try {
+//     const { name, email, password, contact } = req.body;
+
+//     // Check if an admin with the provided email already exists
+//     const existingAdmin = await adminModel.findOne({ email });
+//     if (existingAdmin) {
+//       return res.status(400).json({ message: "Admin with this email already exists!" });
+//     }
+
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Create a new admin object
+//     const newAdmin = new adminModel({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       contact,
+//     });
+
+//     // Save the admin to the database
+//     await newAdmin.save();
+
+//     res.status(201).json({ message: "Admin added successfully!", data: newAdmin });
+//   } catch (err) {
+//     res.status(400).json({ error: err.message });
+//   }
+// };
 export const addAdmin = async (req, res) => {
   try {
     const { name, email, password, contact } = req.body;
@@ -32,11 +61,19 @@ export const addAdmin = async (req, res) => {
     // Save the admin to the database
     await newAdmin.save();
 
-    res.status(201).json({ message: "Admin added successfully!", data: newAdmin });
+    // Generate JWT token
+    const token = jwt.sign(
+      { id: newAdmin._id, email: newAdmin.email },
+      process.env.JWT_SECRET || 'your_secret_key',
+      { expiresIn: '1h' }
+    );
+
+    res.status(201).json({ message: "Admin added successfully!", token });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
+
 
 // Get all admins
 export const getAdmins = async (req, res) => {
@@ -83,30 +120,70 @@ export const deleteAdmin = async (req, res) => {
   }
 };
 
+// export const loginAdmin = async (req, res) => {
+//   const { email, password } = req.body;
+
+//   try {
+//     const admin = await adminModel.findOne({ email });
+//     if (!admin) {
+//       return res.status(404).json({ error: 'Admin not found' });
+//     }
+
+//     const isPasswordValid = await bcrypt.compare(password, admin.password);
+//     if (!isPasswordValid) {
+//       return res.status(401).json({ error: 'Invalid password' });
+//     }
+
+//     // Generate JWT
+//     const token = jwt.sign(
+//       { id: admin._id, email: admin.email },
+//       process.env.JWT_SECRET || 'your_secret_key',
+//       { expiresIn: '1h' }
+//     );
+
+//     res.status(200).json({ message: 'Login successful', token });
+//   } catch (error) {
+//     console.error("Login Error:", error.message);
+//     res.status(500).json({ error: 'An error occurred during login' });
+//   }
+// };
+
 export const loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Check if the admin exists
     const admin = await adminModel.findOne({ email });
     if (!admin) {
-      return res.status(404).json({ error: 'Admin not found' });
+      return res.status(404).json({ error: "Admin not found" });
     }
 
+    // Verify password
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid password' });
+      return res.status(401).json({ error: "Invalid password" });
     }
 
-    // Generate JWT
+    // Generate JWT token
     const token = jwt.sign(
       { id: admin._id, email: admin.email },
-      process.env.JWT_SECRET || 'your_secret_key',
-      { expiresIn: '1h' }
+      process.env.JWT_SECRET || "your_secret_key",
+      { expiresIn: "1h" }
     );
 
-    res.status(200).json({ message: 'Login successful', token });
+    // Send response with token and admin details
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        contact: admin.contact, // Add other fields you want to include
+      },
+    });
   } catch (error) {
     console.error("Login Error:", error.message);
-    res.status(500).json({ error: 'An error occurred during login' });
+    res.status(500).json({ error: "An error occurred during login" });
   }
 };

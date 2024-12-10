@@ -22,6 +22,11 @@ const AdminLoginForm = () => {
           password,
         }
       );
+      // console.log(response.data);
+      const userData = response.data;
+      // const token = response.data.token; // Assuming the token is returned
+      // console.log(token);
+      localStorage.setItem("authToken", JSON.stringify(userData)); // Save the token
       toast.success(response.data.message);
       setTimeout(() => {
         navigate("/admin-dashboard");

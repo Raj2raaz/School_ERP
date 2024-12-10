@@ -19,6 +19,7 @@ import ManageClasses from "./components/DetailsPages/ManageClasses.jsx";
 import ManageStudents from "./components/DetailsPages/ManageStudents.jsx";
 import ManageTeachers from "./components/DetailsPages/ManageTeachers";
 import TeacherManageClasses from "./components/DetailsPages/TeacherManageClasses.jsx";
+import { ProtectedRouteAdmin } from "./components/ProtectedRoute.js";
 
 function App() {
   return (
@@ -35,7 +36,12 @@ function App() {
           <Route path="/signup/teacher" element={<SignupPage userType="teacher" />} />
           <Route path="/signup/student" element={<SignupPage userType="student" />} />
 
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/admin-dashboard" 
+            element={
+              <ProtectedRouteAdmin>
+                <AdminDashboard />
+              </ProtectedRouteAdmin>
+              } />
           <Route path="/teacher-dashboard" element={<TeacherLandingPage />} />
           <Route path="/student-dashboard" element={<StudentLandingPage />} />
 
